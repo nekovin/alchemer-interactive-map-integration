@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            margin-bottom: 5px;
+        }
+        p {
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        #map {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Park selection</h2>
+    <p>Click park</p>
+
+    <!-- map cont -->
+    <div id="map"></div>
+
+    <button id="myButton">Submit selection</button>
+
+    <script type="module">
+      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE", // #TODO delete this from the repo and add to .env file
+        v: "weekly",
+      });
+
+      const parkData = (await import("./parks_data.json", { with: { type: "json" } })).default;
+      const { Map } = await google.maps.importLibrary("maps");
+
+      const map = new Map(document.getElementById("map"), {
+        zoom: 11,
+        center: { lat: -37.8080, lng: 144.9750 },
+      });
+        
+      let userSelections = [];
+
+      document.getElementById("myButton").addEventListener("click", ()=> {
+          console.log("selections", userSelections);
+      });
+
+      parkData.forEach(park => {
+        let isSelected = false; //track selection
+
+        const polygonHighlight = new google.maps.Polygon({
+          paths: park.coords,
+          strokeColor: park.defaultColor,
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: park.defaultColor,
+          fillOpacity: 0.35,
+          map: map
+        });
+
+        google.maps.event.addListener(polygonHighlight, 'click', function() {
+          isSelected = !isSelected; // Toggle the state
+
+          if (isSelected) {
+
+            polygonHighlight.setOptions({
+              fillColor: park.selectedColor,
+              strokeColor: park.selectedColor
+            });
+            
+            if (!userSelections.includes(park.name)) {
+              userSelections.push(park.name);
+            }
+          } else {
+
+            polygonHighlight.setOptions({
+              fillColor: park.defaultColor,
+              strokeColor: park.defaultColor
+            });
+            
+            userSelections = userSelections.filter(item => item !== park.name);
+          }
+
+          console.log("Current Selections Array:", userSelections);
+        });
+      });
+
+    myButton.addEventListener("click", function() {
+      console.log("selections: ", userSelections);
+    }); 
+
+
+    //TODO: make sure to account for somebody pressing submit then changing their choice
+
+    </script>
+
+</body>
+</html>
