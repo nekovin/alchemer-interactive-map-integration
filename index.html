@@ -134,9 +134,19 @@
       const parkData = (await import("./parks_data.json", { with: { type: "json" } })).default;
       const { Map: GoogleMap } = await google.maps.importLibrary("maps");
 
+      // Bounding box around Victoria, AU.
+      const vicBounds = {
+        north: -32.9, south: -40.2, east: 150.0, west: 140.9
+      };
+
       const map = new GoogleMap(document.getElementById("map"), {
         zoom: 9,
         center: { lat: -37.8080, lng: 144.9750 },
+        restriction: {
+          latLngBounds: vicBounds, // can't pan the map outside Victoria
+          strictBounds: false
+        },
+        minZoom: 6, // stop zooming out past the state
       });
 
       // ---- Location search: Google Places autocomplete moves the map ----
@@ -160,6 +170,7 @@
 
       placeAutocomplete.placeholder = "Search for a street / area..";
       placeAutocomplete.includedRegionCodes = ['au'];
+      placeAutocomplete.locationRestriction = vicBounds; // only suggest places in Victoria
 
 
       let userSelections = [];
