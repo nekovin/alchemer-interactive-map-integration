@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Maps test</title>
+    <title>Alchemer Google Maps Question</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,11 +28,21 @@
 
 <body>
 
-    <h2>Park selection</h2>
-    <p>Click park</p>
+    <h2>Please select the parks you have visited in the last 12 months</h2>
+    <p>Click on a park to select it</p>
 
     <!-- map cont -->
     <div id="map"></div>
+
+    <!-- search bar -->
+    <!-- https://stackoverflow.com/questions/69917128/how-to-search-a-json-file-from-a-search-bar-in-html -->
+    <div class="topnav"> 
+    <!--  <a href="#contact">Contact</a> -->
+      <input type="text" id="searchbar" placeholder="Search for parks here..">
+      <ul id="list-holder">
+
+      </ul>
+    </div>
 
     <button id="myButton">Submit selection</button>
 
@@ -43,22 +53,38 @@
       });
 
       const parkData = (await import("./parks_data.json", { with: { type: "json" } })).default;
-      const { Map } = await google.maps.importLibrary("maps");
+      const { Map: GoogleMap } = await google.maps.importLibrary("maps");
 
-      const map = new Map(document.getElementById("map"), {
+      const map = new GoogleMap(document.getElementById("map"), {
         zoom: 11,
         center: { lat: -37.8080, lng: 144.9750 },
       });
         
       let userSelections = [];
 
-      document.getElementById("myButton").addEventListener("click", ()=> {
-          console.log("selections", userSelections);
-      });
+      // Registry so both the map and the search bar can drive the same park.
+      const parkRegistry = new Map(); // park.name -> { park, polygon, selected }
+
+      // Single source of truth for selecting / deselecting a park.
+      function setSelected(entry, selected) {
+        entry.selected = selected;
+        entry.polygon.setOptions({
+          fillColor: selected ? entry.park.selectedColor : entry.park.defaultColor,
+          strokeColor: selected ? entry.park.selectedColor : entry.park.defaultColor
+        });
+
+        if (selected) {
+          if (!userSelections.includes(entry.park.name)) {
+            userSelections.push(entry.park.name);
+          }
+        } else {
+          userSelections = userSelections.filter(item => item !== entry.park.name);
+        }
+
+        console.log("Current Selections Array:", userSelections);
+      }
 
       parkData.forEach(park => {
-        let isSelected = false; //track selection
-
         const polygonHighlight = new google.maps.Polygon({
           paths: park.coords,
           strokeColor: park.defaultColor,
@@ -69,39 +95,53 @@
           map: map
         });
 
+        const entry = { park, polygon: polygonHighlight, selected: false };
+        parkRegistry.set(park.name, entry);
+
         google.maps.event.addListener(polygonHighlight, 'click', function() {
-          isSelected = !isSelected; // Toggle the state
-
-          if (isSelected) {
-
-            polygonHighlight.setOptions({
-              fillColor: park.selectedColor,
-              strokeColor: park.selectedColor
-            });
-            
-            if (!userSelections.includes(park.name)) {
-              userSelections.push(park.name);
-            }
-          } else {
-
-            polygonHighlight.setOptions({
-              fillColor: park.defaultColor,
-              strokeColor: park.defaultColor
-            });
-            
-            userSelections = userSelections.filter(item => item !== park.name);
-          }
-
-          console.log("Current Selections Array:", userSelections);
+          setSelected(entry, !entry.selected);
         });
       });
 
-    myButton.addEventListener("click", function() {
-      console.log("selections: ", userSelections);
-    }); 
+      // ---- Search: filter the real parks and let results select + focus a park ----
+      const searchbar = document.getElementById("searchbar");
+      const listHolder = document.getElementById("list-holder");
+      const MAX_RESULTS = 50;
 
+      searchbar.addEventListener("keyup", () => {
+        const input = searchbar.value.trim().toLowerCase();
+        listHolder.innerHTML = "";
+        if (!input) return; // don't dump all 3,558 parks on an empty query
 
-    //TODO: make sure to account for somebody pressing submit then changing their choice
+        const matches = parkData
+          .filter(park => park.name.toLowerCase().includes(input))
+          .slice(0, MAX_RESULTS);
+
+        matches.forEach(park => {
+          const entry = parkRegistry.get(park.name);
+          const li = document.createElement("li");
+          li.style.cursor = "pointer";
+          li.textContent = park.name + (entry.selected ? " ✓" : "");
+
+          li.addEventListener("click", () => {
+            setSelected(entry, !entry.selected);
+            li.textContent = park.name + (entry.selected ? " ✓" : "");
+            const firstPoint = entry.park.coords?.[0]?.[0]; // first point of first ring
+            if (firstPoint) {
+              map.panTo(firstPoint);
+              map.setZoom(15);
+            }
+          });
+
+          listHolder.appendChild(li);
+        });
+      });
+
+      document.getElementById("myButton").addEventListener("click", () => {
+        console.log("selections: ", userSelections);
+      });
+
+      //TODO: make sure to account for somebody pressing submit then changing their choice
 
     </script>
 
