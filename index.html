@@ -31,6 +31,10 @@
     <h2>Please select the parks you have visited in the last 12 months</h2>
     <p>Click on a park to select it</p>
 
+    <!-- location search (Google Places) - moves the map to a place -->
+    <label for="location-search">Find a location:</label>
+    <div id="location-search" style="margin: 5px 0 15px;"></div>
+
     <!-- map cont -->
     <div id="map"></div>
 
@@ -60,10 +64,27 @@
       const { Map: GoogleMap } = await google.maps.importLibrary("maps");
 
       const map = new GoogleMap(document.getElementById("map"), {
-        zoom: 11,
+        zoom: 9,
         center: { lat: -37.8080, lng: 144.9750 },
       });
-        
+
+      // ---- Location search: Google Places autocomplete moves the map ----
+      const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
+      const placeAutocomplete = new PlaceAutocompleteElement();
+      document.getElementById("location-search").appendChild(placeAutocomplete);
+
+      placeAutocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
+        const place = placePrediction.toPlace();
+        await place.fetchFields({ fields: ["location", "viewport"] });
+
+        if (place.viewport) {
+          map.fitBounds(place.viewport); // zoom to fit the whole place
+        } else if (place.location) {
+          map.setCenter(place.location);
+          map.setZoom(11);
+        }
+      });
+
       let userSelections = [];
 
       // Registry so both the map and the search bar can drive the same park.

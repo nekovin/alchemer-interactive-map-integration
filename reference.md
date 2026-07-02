@@ -34,6 +34,8 @@ Documentation links for techniques used in this project.
 - [Polygon `paths` (array of paths → separate loops, even-odd rule)](https://developers.google.com/maps/documentation/javascript/reference/polygon#PolygonOptions.paths)
 - [Maps JavaScript API: Events](https://developers.google.com/maps/documentation/javascript/events)
 - [Maps JavaScript API: Load the API (callback)](https://developers.google.com/maps/documentation/javascript/load-maps-js-api)
+- [Places API: `PlaceAutocompleteElement` (location search widget, `gmp-select` event)](https://developers.google.com/maps/documentation/javascript/place-autocomplete-new) — the second search bar.
+- [Places API: `fetchFields()` (location, viewport)](https://developers.google.com/maps/documentation/javascript/reference/place#Place.fetchFields)
 
 https://developers.google.com/maps/documentation/javascript/events
 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
