@@ -146,6 +146,7 @@
       document.getElementById("location-search").appendChild(placeAutocomplete);
 
       placeAutocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
+
         const place = placePrediction.toPlace();
         await place.fetchFields({ fields: ["location", "viewport"] });
 
@@ -158,6 +159,8 @@
       });
 
       placeAutocomplete.placeholder = "Search for a street / area..";
+      placeAutocomplete.includedRegionCodes = ['au'];
+
 
       let userSelections = [];
 
