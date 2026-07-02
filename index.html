@@ -8,20 +8,83 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            /* Force light theme so the Places widget doesn't render dark in OS dark mode */
+            color-scheme: light;
+        }
+
+        /* Make both search bars the same width */
+        #location-search,
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+        }
+        #location-search gmp-place-autocomplete {
+            width: 100%;
         }
         h2 {
             margin-bottom: 5px;
+            font-family: Arial, sans-serif;
         }
         p {
-            color: #666;
-            margin-top: 0;
-            margin-bottom: 15px;
+          display: block;
+          margin-top: 10;
+          margin-bottom: 10px;
         }
         #map {
             width: 100%;
             height: 600px;
             border: 1px solid #ccc;
             border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Park search styled to match the Google PlaceAutocompleteElement widget.
+           Icon colour (#5e5e5e) and focus ring (#1a73e8) are the widget's exact
+           values; border/height/radius/shadow are Material defaults - confirm
+           against DevTools "Computed" on input[part="input"] if you want a pixel match. */
+        .search-box {
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            max-width: 400px;
+            height: 40px;
+            padding: 0 12px;
+            background: #fff;
+            border: 1px solid #dfe1e5;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+        .search-box:focus-within {
+            border-color: #1a73e8;
+        }
+        .search-box svg {
+            flex: 0 0 auto;
+            margin-right: 8px;
+        }
+        .search-box input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 14px;
+            color: #202124;
         }
     </style>
 </head>
@@ -35,17 +98,25 @@
     <label for="location-search">Find a location:</label>
     <div id="location-search" style="margin: 5px 0 15px;"></div>
 
-    <!-- map cont -->
-    <div id="map"></div>
-
     <!-- search bar -->
     <!-- https://stackoverflow.com/questions/69917128/how-to-search-a-json-file-from-a-search-bar-in-html -->
-    <div class="topnav"> 
+    <div class="topnav">
     <!--  <a href="#contact">Contact</a> -->
-      <input type="text" id="searchbar" placeholder="Search for parks here..">
+      <div class="search-box">
+        <!-- same magnifier icon the Places widget renders -->
+        <svg width="25" height="24" fill="none" viewBox="0 0 25 24">
+          <path fill="#5e5e5e" fill-rule="evenodd" d="M15.56 13.27 21.29 19l-1.49 1.49-5.73-5.73A6.4 6.4 0 0110.3 16a6.5 6.5 0 116.5-6.5c0 1.41-.47 2.7-1.24 3.77M10.3 5a4.5 4.5 0 10-.01 8.99A4.5 4.5 0 0010.3 5" clip-rule="evenodd"></path>
+        </svg>
+        <input type="text" id="searchbar" placeholder="Search for parks here..">
+      </div>
       <ul id="list-holder">
       </ul>
     </div>
+
+    <!-- map cont -->
+    <div id="map"></div>
+
+    
 
     <h3>Your selected parks (<span id="selected-count">0</span>)</h3>
     <p id="selected-empty">No parks selected yet.</p>
@@ -70,6 +141,7 @@
 
       // ---- Location search: Google Places autocomplete moves the map ----
       const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
+      
       const placeAutocomplete = new PlaceAutocompleteElement();
       document.getElementById("location-search").appendChild(placeAutocomplete);
 
@@ -84,6 +156,8 @@
           map.setZoom(11);
         }
       });
+
+      placeAutocomplete.placeholder = "Search for a street / area..";
 
       let userSelections = [];
 
