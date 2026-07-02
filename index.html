@@ -40,9 +40,13 @@
     <!--  <a href="#contact">Contact</a> -->
       <input type="text" id="searchbar" placeholder="Search for parks here..">
       <ul id="list-holder">
-
       </ul>
     </div>
+
+    <h3>Your selected parks (<span id="selected-count">0</span>)</h3>
+    <p id="selected-empty">No parks selected yet.</p>
+    <ul id="selected-holder">
+    </ul>
 
     <button id="myButton">Submit selection</button>
 
@@ -81,7 +85,29 @@
           userSelections = userSelections.filter(item => item !== entry.park.name);
         }
 
+        renderSelections();
         console.log("Current Selections Array:", userSelections);
+      }
+
+      // Show the user's current selections; clicking one removes it.
+      const selectedHolder = document.getElementById("selected-holder");
+      const selectedCount = document.getElementById("selected-count");
+      const selectedEmpty = document.getElementById("selected-empty");
+
+      function renderSelections() {
+        selectedHolder.innerHTML = "";
+        selectedCount.textContent = userSelections.length;
+        selectedEmpty.style.display = userSelections.length ? "none" : "";
+
+        userSelections.forEach(name => {
+          const entry = parkRegistry.get(name);
+          const li = document.createElement("li");
+          li.textContent = name + "  ✕";
+          li.title = "Click to remove";
+          li.style.cursor = "pointer";
+          li.addEventListener("click", () => setSelected(entry, false));
+          selectedHolder.appendChild(li);
+        });
       }
 
       parkData.forEach(park => {
