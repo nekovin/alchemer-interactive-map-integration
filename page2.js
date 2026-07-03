@@ -149,6 +149,14 @@ window.initAlchemerMap = function () {
     setTimeout(window.initAlchemerMap, 100);
     return;
   }
+  var mapLoader = document.querySelector('.loader');
+  if (mapLoader) { 
+    mapLoader.style.display = 'none'; 
+  }
+  var mapContent = document.getElementById('map-interface-content');
+  if (mapContent) {
+    mapContent.style.display = 'block';
+  }
   const mapElement = document.getElementById("map");
   if (!mapElement) {
     // was a silent return in v1 - now retry, Alchemer may not have the
