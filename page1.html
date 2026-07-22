@@ -1,25 +1,45 @@
 <div id="park-map-wrapper">
-    <p>Click on a park to select it</p>
-    <!-- location search (Google Places) - moves the map to a place --><label>Find a location:</label>
-    
-    <div id="location-search" style="margin: 5px 0 15px;"> </div>
-    <!-- park name search bar -->
-    
-    <div class="search-box"><!-- same magnifier icon the Places widget renders --><input id="searchbar" type="text" /></div>
-    
-    <ul id="list-holder">
-        <li> </li>
-    </ul>
-    <!-- map container -->
-    
-    <div id="map" style="width: 100%; height: 600px; border: 1px solid #ccc; border-radius: 8px;"> </div>
-    
-    <h3>Your selected parks (<span id="selected-count">0</span>)</h3>
-    
-    <p id="selected-empty">No parks selected yet.</p>
-    
-    <ul id="selected-holder">
-        <li> </li>
-    </ul>
+    <p>Click on a park to select it, or use the search boxes below.</p>
+
+    <!-- side-by-side: Google Places location search + park-name filter -->
+    <div class="search-row">
+        <div class="search-col">
+            <label for="location-search">Find a location</label>
+            <!-- Google Places autocomplete gets injected here; moves the map to a place -->
+            <div id="location-search"> </div>
+            <div id="places-notice" style="display:none;">
+                Location search is unavailable right now.
+                <button type="button" class="retry-link">Retry</button>
+            </div>
+        </div>
+
+    <!--
+        <div class="search-col">
+            <label for="searchbar">Search for a park</label>
+            <div class="search-box">
+                <svg width="25" height="24" fill="none" viewBox="0 0 25 24"><path fill="#5e5e5e" fill-rule="evenodd" d="M15.56 13.27 21.29 19l-1.49 1.49-5.73-5.73A6.4 6.4 0 0110.3 16a6.5 6.5 0 116.5-6.5c0 1.41-.47 2.7-1.24 3.77M10.3 5a4.5 4.5 0 10-.01 8.99A4.5 4.5 0 0010.3 5" clip-rule="evenodd"></path></svg>
+                <input id="searchbar" type="text" />
+            </div>
+            <ul id="list-holder"></ul>
+        </div>
+    -->
     </div>
-    
+
+    <!-- map + loading skeleton + error overlay -->
+    <div id="map-wrap">
+        <div id="map"> </div>
+        <div id="map-loader">
+            <div class="spinner"></div>
+            <div class="loader-text">Loading map…</div>
+        </div>
+        <div id="map-error" style="display:none;">
+            <div class="error-icon">⚠️</div>
+            <div class="error-text"></div>
+            <button type="button" class="retry-btn">Try again</button>
+        </div>
+    </div>
+
+    <h3>Your selected parks (<span id="selected-count">0</span>)</h3>
+    <p id="selected-empty">No parks selected yet.</p>
+    <ul id="selected-holder"></ul>
+</div>
