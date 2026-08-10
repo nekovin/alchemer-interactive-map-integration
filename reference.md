@@ -27,6 +27,26 @@ Documentation links for techniques used in this project.
 - [Vicmap Features of Interest / Parks Victoria PARKRES](https://discover.data.vic.gov.au/dataset/parkres-parks-and-reserves) — the parks & reserves feature class.
 - [GDAL `ogr2ogr` (convert `.gdb`/`.shp` → GeoJSON)](https://gdal.org/en/stable/programs/ogr2ogr.html) — likely conversion step to `PARKRE_geo.json`.
 - [OGR Esri File Geodatabase (`.gdb`) driver](https://gdal.org/en/stable/drivers/vector/openfilegdb.html)
+- [FileGDB format spec (reverse-engineered): file layout & `aXXXXXXXX` naming](https://github.com/rouault/dump_gdbtable/wiki/FGDB-Spec) — what `.gdbtable`/`.gdbtablx`/`.spx`/`.atx` hold and the hex dataset IDs.
+- [Esri: system tables in a file geodatabase](https://desktop.arcgis.com/en/arcmap/latest/manage-data/geodatabases/geodatabase-system-tables.htm) — `GDB_SystemCatalog`, `GDB_Items`, etc. (IDs 1–8).
+- [GeoPandas: `read_file()`](https://geopandas.org/en/stable/docs/reference/api/geopandas.read_file.html) — reads a `.gdb` folder (pass `layer=`).
+- [GeoPandas: `list_layers()`](https://geopandas.org/en/stable/docs/reference/api/geopandas.list_layers.html) — enumerate layers in a multi-layer `.gdb`.
+- [GeoPandas: `GeoDataFrame.to_crs()`](https://geopandas.org/en/stable/docs/reference/api/geopandas.GeoDataFrame.to_crs.html) — PARKRES is VicGrid94 (EPSG:3111); GeoJSON needs EPSG:4326.
+- [GeoPandas: `GeoDataFrame.to_file()`](https://geopandas.org/en/stable/docs/reference/api/geopandas.GeoDataFrame.to_file.html) — write with `driver="GeoJSON"`.
+- [GeoPandas: reading/writing files & engines](https://geopandas.org/en/stable/docs/user_guide/io.html) — `pyogrio` is the default engine.
+- [pyogrio docs](https://pyogrio.readthedocs.io/en/latest/) — the GDAL-backed engine geopandas uses (ships GDAL in its wheel).
+- [EPSG:3111 — GDA94 / Vicgrid](https://epsg.io/3111) — the projection Victorian spatial data is distributed in.
+- [Shapely: `Polygon.exterior`](https://shapely.readthedocs.io/en/stable/reference/shapely.Polygon.html) — the outer ring we emit per polygon (holes are dropped).
+- [Shapely: `MultiPolygon.geoms`](https://shapely.readthedocs.io/en/stable/reference/shapely.MultiPolygon.html) — iterate the parts of a multipart park.
+- [Shapely: `geom_type`](https://shapely.readthedocs.io/en/stable/manual.html#object.geom_type) — Polygon vs MultiPolygon dispatch.
+
+## Category lookup (PV_parks_piers.xlsx)
+- [pandas: `read_excel()`](https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html) — read the Label/Category sheet.
+- [pandas: `DataFrame.to_excel()`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html) — write the unmatched-labels report.
+- [pandas: Excel I/O user guide](https://pandas.pydata.org/docs/user_guide/io.html#excel-files) — engine selection and gotchas.
+- [openpyxl docs](https://openpyxl.readthedocs.io/en/stable/) — the `.xlsx` engine pandas uses.
+- [Python: `re.sub()`](https://docs.python.org/3/library/re.html#re.sub) — normalising labels before matching.
+- [Python: `dict.setdefault()`](https://docs.python.org/3/library/stdtypes.html#dict.setdefault) — grouping geometries by park name.
 - [OGR ESRI Shapefile (`.shp`) driver](https://gdal.org/en/stable/drivers/vector/shapefile.html)
 
 ## Google Maps

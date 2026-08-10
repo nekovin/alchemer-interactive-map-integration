@@ -23,9 +23,7 @@ OUTPUT = "parks_data.json"
 DEFAULT_COLOR = "#2E7D32"
 SELECTED_COLOR = "#FF9800"
 
-# Drop features whose NAME contains any of these substrings (partial/non-PV rows).
 SKIP_CONTAINS = []
-# Drop parks whose NAME exactly matches any of these.
 SKIP_EXACT = []
 
 

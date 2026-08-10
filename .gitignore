@@ -1,3 +1,7 @@
 .venv
 *.json
 old/
+*.xlsx
+*.gdb
+*__pycache__
+*.csv
