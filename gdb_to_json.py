@@ -40,13 +40,24 @@ SKIP_EXACT = []
 CATEGORY_SOURCE_FIELD = "STYLE_TYPE" 
 
 
+def ring(coords):
+    """A coordinate sequence as [{lat, lng}, ...]; source is [lng, lat]."""
+    return [{"lat": y, "lng": x} for x, y in coords]
+
+
 def rings(geom):
-    """Outer ring of every polygon in a (Multi)Polygon, as [{lat, lng}, ...] lists."""
+    """Every ring of a (Multi)Polygon, outer and inner, as [{lat, lng}, ...] lists.
+
+    Inner rings are kept so lakes and excised blocks render as holes rather than
+    being painted over: google.maps.Polygon `paths` applies the even-odd rule, so a
+    ring nested inside another becomes a hole automatically.
+    """
     polygons = geom.geoms if geom.geom_type == "MultiPolygon" else [geom]
-    return [
-        [{"lat": y, "lng": x} for x, y in polygon.exterior.coords]
-        for polygon in polygons
-    ]
+    out = []
+    for polygon in polygons:
+        out.append(ring(polygon.exterior.coords))
+        out.extend(ring(interior.coords) for interior in polygon.interiors)
+    return out
 
 
 def normalise(name):

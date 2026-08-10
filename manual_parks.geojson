@@ -1,0 +1,20 @@
+{
+    "type": "FeatureCollection",
+    "_comment": "Hand-added places missing from CROWNLAND.gdb (council land, foreshore, etc). Draw polygons at https://geojson.io, then paste the features here and fill in the properties. Coordinates are [lng, lat], WGS84.",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Dendy Street Beach",
+                "category": "BATHING BOXES",
+                "manager": "Bayside City Council"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    []
+                ]
+            }
+        }
+    ]
+}
