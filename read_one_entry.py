@@ -11,7 +11,7 @@ import sys
 import geopandas as gpd
 
 GDB_SOURCE = "PV_PARKRES_V.gdb"
-PARKS_SOURCE = "4463_parks_data.json"
+PARKS_SOURCE = "parks_data.json"
 NAME_FIELD = "Albert Park"
 
 

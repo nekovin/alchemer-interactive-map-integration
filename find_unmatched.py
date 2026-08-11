@@ -14,7 +14,7 @@ import re
 
 import pandas as pd
 
-PARKS_SOURCE = "4463_parks_data.json"
+PARKS_SOURCE = "parks_data.json"
 UNMATCHED_SOURCE = "unmatched_labels.xlsx"
 OUTPUT = "unmatched_hits.csv"
 

@@ -83,7 +83,9 @@ def match_name_to_category(parks_data, lookup):
     for park in parks_data:
         key = normalise(park["name"])
         label, category = lookup.get(key, (None, DEFAULT_CATEGORY))
-        park["category"] = category
+        # separate key: "category" holds the .gdb's own STYLE_TYPE, which covers
+        # every park, so the spreadsheet must not overwrite it.
+        park["pvCategory"] = category
         if label is not None:
             matched.add(key)
 
@@ -130,7 +132,7 @@ def main():
     with open(output, "w") as f:
         json.dump(parks_data, f, indent=4)
 
-    tagged = sum(1 for p in parks_data if p["category"] is not DEFAULT_CATEGORY)
+    tagged = sum(1 for p in parks_data if p["pvCategory"] is not DEFAULT_CATEGORY)
     print(f"{layer}: {len(gdf)} features -> {len(parks_data)} parks -> {output}")
     print(f"{PV_SOURCE}: {len(lookup)} labels -> {tagged} tagged, {len(unmatched)} unmatched")
     print(f"unmatched labels -> {UNMATCHED_OUTPUT}")

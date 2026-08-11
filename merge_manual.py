@@ -1,18 +1,19 @@
 """Merge hand-drawn places from manual_parks.geojson into a parks_data JSON.
 
-Anything missing from CROWNLAND.gdb (council foreshore, beaches, piers not held as
-Crown land) gets drawn at https://geojson.io and added to manual_parks.geojson. This
-merges those in, matching by name: an existing park is replaced, a new one appended.
+Anything missing from PV_PARKRES_V.gdb (council parks and foreshore, piers not held
+as Crown land) gets drawn at https://geojson.io and added to manual_parks.geojson.
+This merges those in, matching by name: an existing park is replaced, a new one
+appended.
 
 Usage:
-    python merge_manual.py                                    # in place on crownland_parks_data.json
-    python merge_manual.py crownland_parks_data.json out.json
+    python merge_manual.py                          # in place on parks_data.json
+    python merge_manual.py parks_data.json out.json
 """
 
 import json
 import sys
 
-PARKS_SOURCE = "crownland_parks_data.json"
+PARKS_SOURCE = "parks_data.json"
 MANUAL_SOURCE = "manual_parks.geojson"
 
 DEFAULT_COLOR = "#2E7D32"
