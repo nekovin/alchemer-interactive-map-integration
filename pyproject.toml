@@ -7,7 +7,10 @@ name = "parksres"
 version = "0.0.1"
 
 dependencies = [
-  "python-dotenv"
+  "python-dotenv",
+  "pandas",
+  "openpyxl",
+  "geopandas",
 ]
 
 requires-python = ">=3.12.3"
@@ -38,10 +41,4 @@ Repository = ""
 Changelog = ""
 
 [project.scripts]
-spam-cli = "spam:main_cli"
-
-[project.gui-scripts]
-spam-gui = "spam:main_gui"
-
-[project.entry-points."spam.magical"]
-tomatoes = "spam:main_tomatoes"
+process-metro-data = "parksres.scripts.map_metro_data:main"

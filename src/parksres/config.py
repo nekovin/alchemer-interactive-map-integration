@@ -8,7 +8,7 @@ load_dotenv()
 # GENERATED
 ROOT = Path(os.getenv("REPOROOT") or "")
 if not ROOT.is_dir():
-    ROOT = Path(__file__).resolve().parents[1]
+    ROOT = Path(__file__).resolve().parents[2]
 
 DATADIR = ROOT / "data"
 PACKAGEDIR = ROOT / "src" / "parksres"

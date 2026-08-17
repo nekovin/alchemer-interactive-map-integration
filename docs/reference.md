@@ -66,3 +66,12 @@ https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 - `pathlib.Path.parents` / `is_dir`: https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parents
 - `sys.path`: https://docs.python.org/3/library/sys.html#sys.path
 - pandas `read_excel`: https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
+- pandas `DataFrame.iterrows`: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.iterrows.html
+- pandas `notna`: https://pandas.pydata.org/docs/reference/api/pandas.notna.html
+- pandas `DataFrame.to_string`: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_string.html
+- pandas `set_option` / display options: https://pandas.pydata.org/docs/user_guide/options.html
+- `str.startswith` (accepts a tuple of prefixes): https://docs.python.org/3/library/stdtypes.html#str.startswith
+- `re.sub`: https://docs.python.org/3/library/re.html#re.sub
+- Entry points / `[project.scripts]` (`module:callable`): https://packaging.python.org/en/latest/specifications/entry-points/
+- pyproject `[project]` table spec: https://packaging.python.org/en/latest/specifications/pyproject-toml/
+- Hatchling src-layout build config: https://hatch.pypa.io/latest/config/build/#file-selection
