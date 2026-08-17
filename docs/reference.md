@@ -59,3 +59,10 @@ Documentation links for techniques used in this project.
 
 https://developers.google.com/maps/documentation/javascript/events
 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+
+## config / map_metro_data
+- python-dotenv `load_dotenv`: https://saurabh-kumar.com/python-dotenv/reference/main/#dotenv.main.load_dotenv
+- `os.getenv`: https://docs.python.org/3/library/os.html#os.getenv
+- `pathlib.Path.parents` / `is_dir`: https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parents
+- `sys.path`: https://docs.python.org/3/library/sys.html#sys.path
+- pandas `read_excel`: https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
