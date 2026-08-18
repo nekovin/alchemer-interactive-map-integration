@@ -6,6 +6,7 @@ The venv is already active. Scripts are installed as console entry points via `[
 process-metro-data     # metro list -> data/metro.csv
 process-types          # metro/pier/reserve -> data/types.csv (needs metro.csv first)
 build-parks-vic        # -> src/parksres/parks_vic_data.json (needs types.csv first)
+crown-to-json          # CROWNLAND.gdb -> src/parksres/crown_data.json (standalone)
 ```
 
 After adding a new entry point, re-run `pip install -e .`.
