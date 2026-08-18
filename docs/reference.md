@@ -86,3 +86,6 @@ https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 - `dict.pop`: https://docs.python.org/3/library/stdtypes.html#dict.pop
 - `str.split` / `str.join`: https://docs.python.org/3/library/stdtypes.html#str.split
 - `enumerate`: https://docs.python.org/3/library/functions.html#enumerate
+- `re.IGNORECASE` flag: https://docs.python.org/3/library/re.html#re.IGNORECASE
+- JS template literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+- `Array.prototype.filter` / `includes`: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter

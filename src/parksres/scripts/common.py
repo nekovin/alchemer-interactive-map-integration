@@ -43,7 +43,8 @@ def expand(word, first):
 
 
 def normalise(name):
-    words = re.sub(r"[^a-z0-9]+", " ", str(name).lower().replace("&", "and")).split()
+    name = re.sub(r"_new$", "", str(name).strip(), flags=re.IGNORECASE)
+    words = re.sub(r"[^a-z0-9]+", " ", name.lower().replace("&", "and")).split()
     return " ".join(expand(w, i == 0) for i, w in enumerate(words))
 
 

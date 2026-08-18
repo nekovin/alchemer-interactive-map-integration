@@ -17,6 +17,7 @@ METRO_LIST = DATADIR / "Metro Park List FINAL.xlsx"
 PV_PARKS_PIERS = DATADIR / "PV_parks_piers.xlsx"
 
 PARKS_JSON = PACKAGEDIR / "parks_data.json"
+PARKS_VIC_JSON = PACKAGEDIR / "parks_vic_data.json"
 METRO_CSV = DATADIR / "metro.csv"
 TYPES_CSV = DATADIR / "types.csv"
 
