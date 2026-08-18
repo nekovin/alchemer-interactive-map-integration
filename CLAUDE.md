@@ -1,3 +1,14 @@
+# Running
+
+The venv is already active. Scripts are installed as console entry points via `[project.scripts]` in `pyproject.toml` — call them by name, no `python -m`, no `.venv/bin/` prefix.
+
+```
+process-metro-data     # metro list -> data/metro.csv
+process-types          # metro/pier/reserve -> data/types.csv (needs metro.csv first)
+```
+
+After adding a new entry point, re-run `pip install -e .`.
+
 # Instructions
 
 - Work from `PV_PARKRES_V.gdb` only. No CROWNLAND.

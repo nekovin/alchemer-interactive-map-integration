@@ -75,3 +75,14 @@ https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 - Entry points / `[project.scripts]` (`module:callable`): https://packaging.python.org/en/latest/specifications/entry-points/
 - pyproject `[project]` table spec: https://packaging.python.org/en/latest/specifications/pyproject-toml/
 - Hatchling src-layout build config: https://hatch.pypa.io/latest/config/build/#file-selection
+- pandas `Series.value_counts` (`dropna=False`): https://pandas.pydata.org/docs/reference/api/pandas.Series.value_counts.html
+- pandas boolean indexing: https://pandas.pydata.org/docs/user_guide/indexing.html#boolean-indexing
+- pandas `DataFrame.to_csv`: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
+- pandas `Series.replace`: https://pandas.pydata.org/docs/reference/api/pandas.Series.replace.html
+- set comprehensions: https://docs.python.org/3/tutorial/datastructures.html#sets
+- dict merge-update operator `|=` (PEP 584): https://peps.python.org/pep-0584/
+- pandas `Series.dropna`: https://pandas.pydata.org/docs/reference/api/pandas.Series.dropna.html
+- pandas `Series.fillna`: https://pandas.pydata.org/docs/reference/api/pandas.Series.fillna.html
+- `dict.pop`: https://docs.python.org/3/library/stdtypes.html#dict.pop
+- `str.split` / `str.join`: https://docs.python.org/3/library/stdtypes.html#str.split
+- `enumerate`: https://docs.python.org/3/library/functions.html#enumerate
