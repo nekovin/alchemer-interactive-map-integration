@@ -231,6 +231,7 @@ console.log("[PARKMAP] JS action loaded (v3)");
 const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/parks_vic_data.json?sp=r&st=2026-08-18T01:35:41Z&se=2026-08-18T09:50:41Z&spr=https&sv=2026-02-06&sr=b&sig=Ed2RME4iaL9GEyU0sRVgfMcpxoeANXDM%2BBknG%2FU2VG8%3D';
 const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391014007-2-19-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
 const ALCHEMER_PIN_FIELD_ID = "sgE-391014007-2-47-element";
+const ALCHEMER_CATEGORY_FIELD_ID = ""; // set to the new hidden field's element id
 const GOOGLE_MAPS_KEY = "AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE";
 
 /* =========================================================================
@@ -322,6 +323,15 @@ function updateAlchemerField() {
   }
   alchemerField.value = userSelections.join(", ");
   alchemerField.dispatchEvent(new Event("change", { bubbles: true }));
+
+  // same order as the names above, so index N is that park's category
+  const categoryField = document.getElementById(ALCHEMER_CATEGORY_FIELD_ID);
+  if (!categoryField) return;
+  categoryField.value = userSelections.map(function (name) {
+    const entry = parkRegistry.get(name);
+    return (entry && entry.park.category) || "";
+  }).join(", ");
+  categoryField.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 // Write the dropped pins into the SECOND Alchemer field as "lat,lng; lat,lng".
