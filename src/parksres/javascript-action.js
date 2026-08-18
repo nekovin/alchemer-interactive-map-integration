@@ -233,6 +233,7 @@ const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391014007-2-19-element"; // THIS NEEDS TO 
 const ALCHEMER_PIN_FIELD_ID = "sgE-391014007-2-47-element";
 const ALCHEMER_CATEGORY_FIELD_ID = ""; // set to the new hidden field's element id
 const GOOGLE_MAPS_KEY = "AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE";
+const EXCLUDED_CATEGORIES = ["pier"];
 
 /* =========================================================================
    Shared helpers - MIRRORED FROM index.html (no build system, no imports).
@@ -639,7 +640,9 @@ function buildMap() {
     return;
   }
 
-  const parkData = window.azureParksData;
+  const parkData = window.azureParksData.filter(function (park) {
+    return !EXCLUDED_CATEGORIES.includes(park.category);
+  });
 
   map = new google.maps.Map(mapElement, {
     zoom: 9,

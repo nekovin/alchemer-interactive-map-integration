@@ -23,3 +23,6 @@ TYPES_CSV = DATADIR / "types.csv"
 
 KEY = os.getenv("key")
 # END GENERATED
+
+CROWN_GDB = DATADIR / "Order_RWJCZ1/ll_gda2020/filegdb/whole_of_dataset/victoria/CROWNLAND.gdb"
+CROWN_JSON = PACKAGEDIR / "crown_data.json"
