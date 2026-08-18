@@ -89,3 +89,6 @@ https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 - `re.IGNORECASE` flag: https://docs.python.org/3/library/re.html#re.IGNORECASE
 - JS template literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 - `Array.prototype.filter` / `includes`: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+- Shapely `representative_point` (a point guaranteed inside the geometry): https://shapely.readthedocs.io/en/stable/reference/shapely.representative_point.html
+- Shapely `Polygon.area`: https://shapely.readthedocs.io/en/stable/reference/shapely.Polygon.html
+- `google.maps.Circle`: https://developers.google.com/maps/documentation/javascript/reference/polygon#Circle

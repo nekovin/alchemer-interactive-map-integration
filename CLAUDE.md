@@ -7,6 +7,7 @@ process-metro-data     # metro list -> data/metro.csv
 process-types          # metro/pier/reserve -> data/types.csv (needs metro.csv first)
 build-parks-vic        # -> src/parksres/parks_vic_data.json (needs types.csv first)
 crown-to-json          # CROWNLAND.gdb -> src/parksres/crown_data.json (standalone)
+add-centers            # adds a "center" key to each park in parks_vic_data.json
 ```
 
 After adding a new entry point, re-run `pip install -e .`.
