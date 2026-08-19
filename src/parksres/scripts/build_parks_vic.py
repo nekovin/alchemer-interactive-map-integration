@@ -1,3 +1,4 @@
+import argparse
 import json
 
 import pandas as pd
@@ -15,7 +16,22 @@ def read_types():
     return types[types["matched"]]
 
 
-def build(types, parks):
+def entry(park, row=None):
+    return {
+        "id": park["name"].lower().replace(" ", "_"),
+        "name": park["name"],
+        "defaultColor": DEFAULT_COLOR,
+        "selectedColor": SELECTED_COLOR,
+        "coords": park["coords"],
+        "type": park.get("type"),
+        "category": row["category"] if row is not None else None,
+        "label": row["name"] if row is not None else park["name"],
+        "knownAs": bool(row["known_as"]) if row is not None else False,
+        "managed": row is not None,
+    }
+
+
+def build(types, parks, keep_all=False):
     index = {normalise(p["name"]): p for p in parks}
 
     out = {}
@@ -23,23 +39,23 @@ def build(types, parks):
         park = index.get(normalise(row["park"]))
         if park is None:
             continue
-        out[park["name"]] = {
-            "id": park["name"].lower().replace(" ", "_"),
-            "name": park["name"],
-            "defaultColor": DEFAULT_COLOR,
-            "selectedColor": SELECTED_COLOR,
-            "coords": park["coords"],
-            "type": park.get("type"),
-            "category": row["category"],
-            "label": row["name"],
-            "knownAs": bool(row["known_as"]),
-        }
+        out[park["name"]] = entry(park, row)
+
+    if keep_all:
+        for park in parks:
+            out.setdefault(park["name"], entry(park))
     return list(out.values())
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Build parks_vic_data.json from parks_data.json + types.csv")
+    parser.add_argument("-a", "--all", action="store_true",
+                        help="include every park, flagged managed true/false")
+    args = parser.parse_args()
+
     types = read_types()
-    parks_vic = build(types, read_parks())
+    parks_vic = build(types, read_parks(), keep_all=args.all)
 
     with open(config.PARKS_VIC_JSON, "w") as file:
         json.dump(parks_vic, file, indent=4)
@@ -47,7 +63,9 @@ def main():
     show(pd.DataFrame(
         [{k: v for k, v in p.items() if k != "coords"} for p in parks_vic]
     ))
-    print(f"\n{len(types)} matched entries -> {len(parks_vic)} parks")
+    managed = sum(p["managed"] for p in parks_vic)
+    print(f"\n{len(types)} matched entries -> {len(parks_vic)} parks "
+          f"({managed} managed, {len(parks_vic) - managed} unmanaged)")
     print(f"\n-> {config.PARKS_VIC_JSON}")
 # END GENERATED
 
