@@ -346,6 +346,7 @@ function updateAlchemerField() {
   	return (entry && entry.park.managed) || "";
                                           }).join(", ");
 managedField.dispatchEvent(new Event("change", {bubbles: true}));
+  console.log("Current Selections Array:", userSelections);
 //console.log(managedField);
 }
 
@@ -413,7 +414,6 @@ function setSelected(entry, selected) {
 
   renderSelections();
   updateAlchemerField();
-  console.log("Current Selections Array:", userSelections);
 }
 
 /* ---------- dropped pins (for areas the park polygons don't cover) ---------- */
@@ -427,9 +427,9 @@ function coordsOf(marker) {
   };
 }
 
-// "Other Park - Lat: X, Long: Y"
+// "Other Park - Lat: X Long: Y"
 function pinName(pin) {
-  return pin.label + " - Lat: " + pin.lat.toFixed(5) + ", Long: " + pin.lng.toFixed(5);
+  return pin.label + " - Lat: " + pin.lat.toFixed(5) + " Long: " + pin.lng.toFixed(5);
 }
 
 // A pin joins the registry as a polygon-less park so it flows through the normal fields.
