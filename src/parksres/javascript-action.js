@@ -318,6 +318,7 @@ let userPins = [];                 // [{ id, lat, lng, marker }]
 let pinMode = false;               // is the "Drop a pin" button armed?
 let pinCounter = 0;                // gives each pin a stable id
 let AdvancedMarkerElement = null;  // loaded from the Maps "marker" library
+const PIN_CATEGORY = "other";      // category reported for user-dropped pins
 
 /* ---------- Alchemer sync (runs on every change, no submit button needed) ---------- */
 function updateAlchemerField() {
@@ -396,8 +397,10 @@ function renderSelections() {
 
 /* ---------- single source of truth for select / deselect ---------- */
 function setSelected(entry, selected) {
+  if (!selected && entry.pin) { removePin(entry.pin); return; } // pins are removed, not deselected
+
   entry.selected = selected;
-  entry.polygon.setOptions({
+  if (entry.polygon) entry.polygon.setOptions({
     fillColor: selected ? entry.park.selectedColor : entry.park.defaultColor,
     strokeColor: selected ? entry.park.selectedColor : entry.park.defaultColor
   });
@@ -424,6 +427,29 @@ function coordsOf(marker) {
   };
 }
 
+// "Other Park - Lat: X, Long: Y"
+function pinName(pin) {
+  return pin.label + " - Lat: " + pin.lat.toFixed(5) + ", Long: " + pin.lng.toFixed(5);
+}
+
+// A pin joins the registry as a polygon-less park so it flows through the normal fields.
+function registerPin(pin) {
+  const park = {
+    id: "pin_" + pin.id,
+    name: pin.name,
+    category: PIN_CATEGORY,
+    managed: false,
+    coords: [[{ lat: pin.lat, lng: pin.lng }]]
+  };
+  parkRegistry.set(pin.name, { park: park, polygon: null, selected: true, pin: pin });
+  if (!userSelections.includes(pin.name)) userSelections.push(pin.name);
+}
+
+function unregisterPin(pin) {
+  parkRegistry.delete(pin.name);
+  userSelections = userSelections.filter(function (name) { return name !== pin.name; });
+}
+
 // Render the pins as removable chips (mirrors renderSelections).
 function renderPins() {
   const holder = document.getElementById("pins-holder");
@@ -440,7 +466,7 @@ function renderPins() {
     chip.className = "chip";
 
     const label = document.createElement("span");
-    label.textContent = "Pin " + pin.id + " (" + pin.lat.toFixed(4) + ", " + pin.lng.toFixed(4) + ")";
+    label.textContent = pin.name;
 
     const remove = document.createElement("button");
     remove.type = "button";
@@ -459,6 +485,10 @@ function renderPins() {
 // Drop a new draggable pin at the given coordinates.
 function addPin(lat, lng) {
   if (!AdvancedMarkerElement) return; // marker library didn't load
+
+  const label = (window.prompt("Name this place", "Other Park") || "").trim();
+  if (!label) return; // cancelled
+
   pinCounter += 1;
 
   const marker = new AdvancedMarkerElement({
@@ -468,28 +498,40 @@ function addPin(lat, lng) {
     title: "Dropped pin " + pinCounter
   });
 
-  const pin = { id: pinCounter, lat: lat, lng: lng, marker: marker };
+  const pin = { id: pinCounter, lat: lat, lng: lng, label: label, marker: marker };
+  pin.name = pinName(pin);
   userPins.push(pin);
+  registerPin(pin);
 
   // keep coords in sync if the user drags the pin to a better spot
   marker.addListener("dragend", function () {
     const c = coordsOf(marker);
+    unregisterPin(pin);
     pin.lat = c.lat;
     pin.lng = c.lng;
+    pin.name = pinName(pin);
+    registerPin(pin);
     renderPins();
+    renderSelections();
     updatePinField();
+    updateAlchemerField();
   });
 
   renderPins();
+  renderSelections();
   updatePinField();
+  updateAlchemerField();
 }
 
 // Remove a pin from the map and the list.
 function removePin(pin) {
   pin.marker.map = null; // detaches the marker from the map
   userPins = userPins.filter(function (p) { return p.id !== pin.id; });
+  unregisterPin(pin);
   renderPins();
+  renderSelections();
   updatePinField();
+  updateAlchemerField();
 }
 
 /* ---------- build steps ---------- */

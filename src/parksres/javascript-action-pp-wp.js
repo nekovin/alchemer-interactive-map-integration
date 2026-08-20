@@ -227,11 +227,11 @@
 
 console.log("[PARKMAP] JS action loaded (v3)");
 
-//const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/parks_data.json?sp=r&st=2026-07-01T05:48:03Z&se=2026-07-29T14:03:03Z&spr=https&sv=2026-02-06&sr=b&sig=qw578tyhKN%2FJLu60G2eBMA7nDDrVpjGrgtuHKP%2FJogo%3D';
-const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/parks_vic_data.json?sp=r&st=2026-08-18T01:35:41Z&se=2026-08-18T09:50:41Z&spr=https&sv=2026-02-06&sr=b&sig=Ed2RME4iaL9GEyU0sRVgfMcpxoeANXDM%2BBknG%2FU2VG8%3D';
+const finalAzureUrl = '[question("value"), id="182"]'; 
+const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
+
 const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-28-154-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
 const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-28-155-element";
-const GOOGLE_MAPS_KEY = "AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE";
 const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-28-176-element"
 const EXCLUDED_CATEGORIES = ['PP']
 
@@ -511,15 +511,16 @@ function injectMapsScriptOnce() {
 function drawPolygons(parkData) {
   if (parkRegistry.size) return; // idempotent - don't redraw on retry
   parkData.forEach(function (park) {
-    const polygonHighlight = new google.maps.Polygon({
-      paths: park.coords,
-      strokeColor: park.defaultColor,
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: park.defaultColor,
-      fillOpacity: 0.35,
-      map: map
-    });
+    const polygonHighlight = new google.maps.Circle({
+    center: park.center,
+    radius: 3000,
+    strokeColor: park.defaultColor,
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: park.defaultColor,
+    fillOpacity: 0.35,
+    map: map
+  });
     const entry = { park: park, polygon: polygonHighlight, selected: false };
     parkRegistry.set(park.name, entry);
     google.maps.event.addListener(polygonHighlight, "click", function () {
