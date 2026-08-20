@@ -16,8 +16,8 @@ import sys
 PARKS_SOURCE = "parks_data.json"
 MANUAL_SOURCE = "manual_parks.geojson"
 
-DEFAULT_COLOR = "#2E7D32"
-SELECTED_COLOR = "#FF9800"
+DEFAULT_COLOR = "#0B5EDA"
+SELECTED_COLOR = "#FF0000"
 
 
 def rings(geometry):

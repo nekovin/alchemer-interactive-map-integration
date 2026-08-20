@@ -9,8 +9,8 @@ from parksres import config
 NAME_FIELD = "NAME"
 TYPE_FIELD = "AREA_TYPE"
 
-DEFAULT_COLOR = "#2E7D32"
-SELECTED_COLOR = "#FF9800"
+DEFAULT_COLOR = "#0B5EDA"
+SELECTED_COLOR = "#FF0000"
 
 
 def ring(coords):

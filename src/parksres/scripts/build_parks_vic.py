@@ -7,8 +7,8 @@ from parksres import config
 from parksres.scripts.common import normalise, read_parks, show
 
 # GENERATED
-DEFAULT_COLOR = "#2E7D32"
-SELECTED_COLOR = "#FF9800"
+DEFAULT_COLOR = "#0B5EDA"
+SELECTED_COLOR = "#FF0000"
 
 
 def read_types():
