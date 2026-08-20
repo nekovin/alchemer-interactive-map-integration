@@ -10,6 +10,16 @@ from parksres.scripts.common import normalise, read_parks, show
 DEFAULT_COLOR = "#0B5EDA"
 SELECTED_COLOR = "#FF0000"
 
+CATEGORY_RENAME = {
+    "METRO PARKS/GARDENS": "Metro",
+    "metro": "Metro",
+    "NATIONAL/STATE PARKS": "State",
+}
+
+
+def rename(category):
+    return CATEGORY_RENAME.get(category, category)
+
 
 def read_types():
     types = pd.read_csv(config.TYPES_CSV)
@@ -24,7 +34,7 @@ def entry(park, row=None):
         "selectedColor": SELECTED_COLOR,
         "coords": park["coords"],
         "type": park.get("type"),
-        "category": row["category"] if row is not None else None,
+        "category": rename(row["category"]) if row is not None else None,
         "label": row["name"] if row is not None else park["name"],
         "knownAs": bool(row["known_as"]) if row is not None else False,
         "managed": row is not None,
