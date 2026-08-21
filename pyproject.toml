@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "parksres"
-version = "0.0.1"
+version = "0.0.2"
 
 dependencies = [
   "python-dotenv",
@@ -41,6 +41,7 @@ Repository = ""
 Changelog = ""
 
 [project.scripts]
+parksres = "parksres.main:main"
 process-metro-data = "parksres.scripts.map_metro_data:main"
 process-types = "parksres.scripts.map_types:main"
 build-parks-vic = "parksres.scripts.build_parks_vic:main"

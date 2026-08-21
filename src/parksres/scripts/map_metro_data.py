@@ -1,7 +1,10 @@
 import pandas as pd
 
 from parksres import config
-from parksres.scripts.common import normalise, read_parks, show
+from parksres.common import normalise, read_parks, show
+from typing import Optional
+#import argparse
+from argparse import Namespace, ArgumentParser
 
 # GENERATED
 NAME_COLUMNS = ("Statutory reserve listed in Schedule 2", "Known As", "Also known as") # 6 columns for Also known as
@@ -33,8 +36,23 @@ def map_data(metro, parks):
         })
     return pd.DataFrame(rows)
 
+class Args(Namespace):
+    save: bool
 
 def main():
+    
+    parser = ArgumentParser(
+        description="Add 'save' if you want to save the data"
+    )
+    
+    #save: Optional[bool]
+    
+    parser.add_argument('--save', action="store_true")
+    
+    args: Args = parser.parse_args()
+    
+    save = args.save
+    
     metro, parks = read_data()
     table = map_data(metro, parks)
 
@@ -45,9 +63,11 @@ def main():
     print(f"\n{table[table['matched']]['type'].value_counts(dropna=False).to_string()}")
     print(f"\nmissing:\n{table[~table['matched']]['reserve'].to_string(index=False)}")
 
-    table.to_csv(config.METRO_CSV, index=False)
+    if save:
+        table.to_csv(config.METRO_CSV, index=False)
     print(f"\n-> {config.METRO_CSV}")
 # END GENERATED
+
 
 
 if __name__ == '__main__':

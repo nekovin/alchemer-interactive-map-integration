@@ -3,7 +3,7 @@ import json
 import geopandas as gpd
 import pandas as pd
 
-from parksres import config
+from . import config
 
 # GENERATED
 NAME_FIELD = "NAME"

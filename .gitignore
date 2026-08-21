@@ -11,3 +11,4 @@ docs/reference.md
 
 *.Identifier
 data/*
+.env
