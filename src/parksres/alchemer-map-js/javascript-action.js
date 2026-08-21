@@ -206,6 +206,18 @@
       gap: 8px;
     }
     #pins-holder:empty { display: none; }
+    #park-map-wrapper .pin-name {
+      width: 11ch;
+      min-width: 0;
+      padding: 2px 6px;
+      font: inherit;
+      font-size: 13px;
+      color: var(--accent-dark);
+      background: #fff;
+      border: 1px solid var(--accent-border);
+      border-radius: 4px;
+    }
+    #park-map-wrapper .pin-coords { font-size: 11px; color: #777; }
   `;
   const styleEl = document.createElement("style");
   styleEl.textContent = css;
@@ -318,6 +330,7 @@ let userPins = [];                 // [{ id, lat, lng, marker }]
 let pinCounter = 0;                // gives each pin a stable id
 let AdvancedMarkerElement = null;  // loaded from the Maps "marker" library
 const PIN_CATEGORY = "other";      // category reported for user-dropped pins
+const DEFAULT_PIN_LABEL = "Other Park";
 
 /* ---------- Alchemer sync (runs on every change, no submit button needed) ---------- */
 function updateAlchemerField() {
@@ -449,6 +462,19 @@ function unregisterPin(pin) {
   userSelections = userSelections.filter(function (name) { return name !== pin.name; });
 }
 
+// Rename in place: the name is the registry key, so it has to be re-keyed.
+function renamePin(pin, label) {
+  // commas would split this entry in two when the next page splits on ","
+  const clean = (label || "").replace(/,/g, " ").trim() || DEFAULT_PIN_LABEL;
+  unregisterPin(pin);
+  pin.label = clean;
+  pin.name = pinName(pin);
+  registerPin(pin);
+  renderPins();
+  renderSelections();
+  updateAlchemerField();
+}
+
 // Render the pins as removable chips (mirrors renderSelections).
 function renderPins() {
   const holder = document.getElementById("pins-holder");
@@ -467,8 +493,17 @@ function renderPins() {
     const chip = document.createElement("li");
     chip.className = "chip";
 
-    const label = document.createElement("span");
-    label.textContent = pin.name;
+    const label = document.createElement("input");
+    label.type = "text";
+    label.className = "pin-name";
+    label.value = pin.label;
+    label.title = "Name this place";
+    label.setAttribute("aria-label", "Name for pin " + pin.id);
+    label.addEventListener("change", function () { renamePin(pin, label.value); });
+
+    const coords = document.createElement("span");
+    coords.className = "pin-coords";
+    coords.textContent = pin.lat.toFixed(4) + " " + pin.lng.toFixed(4);
 
     const remove = document.createElement("button");
     remove.type = "button";
@@ -479,6 +514,7 @@ function renderPins() {
     remove.addEventListener("click", function () { removePin(pin); });
 
     chip.appendChild(label);
+    chip.appendChild(coords);
     chip.appendChild(remove);
     holder.appendChild(chip);
   });
@@ -487,9 +523,6 @@ function renderPins() {
 // Drop a new draggable pin at the given coordinates.
 function addPin(lat, lng) {
   if (!AdvancedMarkerElement) return; // marker library didn't load
-
-  const label = (window.prompt("Name this place", "Other Park") || "").trim();
-  if (!label) return; // cancelled
 
   pinCounter += 1;
 
@@ -501,7 +534,7 @@ function addPin(lat, lng) {
     title: "Dropped pin " + pinCounter + " - tap to remove"
   });
 
-  const pin = { id: pinCounter, lat: lat, lng: lng, label: label, marker: marker };
+  const pin = { id: pinCounter, lat: lat, lng: lng, label: DEFAULT_PIN_LABEL, marker: marker };
   pin.name = pinName(pin);
   userPins.push(pin);
   registerPin(pin);
@@ -654,8 +687,7 @@ function setupSearch(parkData) {
 
 // Pin drop: let respondents mark a spot the park polygons don't cover.
 async function setupPinDrop() {
-  const btn = document.getElementById("drop-pin-btn");
-  if (!btn) return;
+  const btn = document.getElementById("drop-pin-btn"); // optional - undo only
 
   // Advanced Markers live in the "marker" library - load it before we allow drops.
   try {
@@ -663,17 +695,19 @@ async function setupPinDrop() {
     AdvancedMarkerElement = markerLib.AdvancedMarkerElement;
   } catch (e) {
     console.error("[pins] marker library failed to load:", e);
-    btn.style.display = "none"; // hide the feature rather than offer a broken button
+    if (btn) btn.style.display = "none"; // hide the feature rather than offer a broken button
     return;
   }
 
   // The button now undoes the most recent pin instead of arming a mode.
-  btn.textContent = "↩ Undo last pin";
-  btn.disabled = true;
-  btn.addEventListener("click", function () {
-    const last = userPins[userPins.length - 1];
-    if (last) removePin(last);
-  });
+  if (btn) {
+    btn.textContent = "↩ Undo last pin";
+    btn.disabled = true;
+    btn.addEventListener("click", function () {
+      const last = userPins[userPins.length - 1];
+      if (last) removePin(last);
+    });
+  }
 
   // Any tap on the base map drops a pin - no mode to arm first.
   map.addListener("click", function (event) {
