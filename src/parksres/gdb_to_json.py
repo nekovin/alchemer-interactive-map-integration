@@ -1,18 +1,6 @@
-"""Read an Esri File Geodatabase (.gdb folder) straight into parks_data.json format.
-
-Does in one step what the old pipeline did in four (download -> mapshaper import ->
-geojson export -> processdata.py). Output matches processdata.py exactly:
-
-    [{"id", "name", "defaultColor", "selectedColor", "coords": [[{lat, lng}, ...]]}]
-
-Parks are often split across several features under the same NAME, so we group by
-NAME and emit each polygon's outer ring as a SEPARATE ring. page2.js passes coords
-to google.maps.Polygon `paths`, which draws each ring as its own loop (so separated
-areas don't get connected by stretched lines).
-
+"""
 Usage:
-    python gdb_to_json.py PV_PARKRES_V.gdb                   # -> parks_data.json
-    python gdb_to_json.py PV_PARKRES_V.gdb out.json          # custom output
+    python gdb_to_json.py PV_PARKRES_V.gdb                   
 """
 
 import json
@@ -22,17 +10,15 @@ import sys
 import geopandas as gpd
 import pandas as pd
 
-OUTPUT = "parks_data.json"
+from parksres.config import GDB, PARKS_JSON, PV_SOURCE, UNMATCHED_OUTPUT, DEFAULT_COLOR, SELECTED_COLOR, PARKS_JSON
+
+OUTPUT = PARKS_JSON
 NAME_FIELD = "NAME"
 
-PV_SOURCE = "PV_parks_piers.xlsx"
-UNMATCHED_OUTPUT = "unmatched_labels.xlsx"
+
 LABEL_FIELD = "Label"
 CATEGORY_FIELD = "Category"
 DEFAULT_CATEGORY = None
-
-DEFAULT_COLOR = "#0B5EDA"
-SELECTED_COLOR = "#FF0000"
 
 SKIP_CONTAINS = []
 SKIP_EXACT = []
@@ -97,8 +83,11 @@ def match_name_to_category(parks_data, lookup):
 
 
 def main():
-    gdb = sys.argv[1]
-    output = sys.argv[2] if len(sys.argv) > 2 else OUTPUT
+    #gdb = sys.argv[1]
+    #output = sys.argv[2] if len(sys.argv) > 2 else OUTPUT
+
+    gdb = GDB
+    output = PARKS_JSON
 
     layer = gpd.list_layers(gdb)["name"][0]
     gdf = gpd.read_file(gdb, layer=layer).to_crs("EPSG:4326")

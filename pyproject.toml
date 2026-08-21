@@ -42,6 +42,7 @@ Changelog = ""
 
 [project.scripts]
 parksres = "parksres.main:main"
+build-json = "parksres.gdb_to_json:main"
 process-metro-data = "parksres.scripts.map_metro_data:main"
 process-types = "parksres.scripts.map_types:main"
 build-parks-vic = "parksres.scripts.build_parks_vic:main"
