@@ -20,7 +20,7 @@ authors_maintainers = [
 ]
 
 description = ""
-readme = "README.rst" 
+readme = "README.md" 
 
 license = "MIT"
 license-files = ["LICEN[CS]E.*"]
