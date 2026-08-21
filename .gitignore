@@ -6,3 +6,8 @@ old/
 *__pycache__
 *.csv
 *.geojson
+
+docs/reference.md
+
+*.Identifier
+data/*
