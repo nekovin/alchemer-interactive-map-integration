@@ -230,10 +230,10 @@ console.log("[PARKMAP] JS action loaded (v3)");
 const finalAzureUrl = '[question("value"), id="182"]'; 
 const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
 
-const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-28-154-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
-const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-28-155-element";
-const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-28-176-element"
-const EXCLUDED_CATEGORIES = ['PP']
+const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-27-159-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
+const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-27-160-element";
+const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-27-177-element"
+const EXCLUDED_CATEGORIES = ['WP']
 
 
 /* =========================================================================
@@ -648,7 +648,7 @@ function buildMap() {
 
   map = new google.maps.Map(mapElement, {
     zoom: 9,
-    center: { lat: -38.108827, lng: 144.833213 },
+    center: { lat: -38.332104, lng: 145.354267 },
     mapId: "DEMO_MAP_ID", // Advanced Markers (pins) require a Map ID - swap for a real one for production
     restriction: { latLngBounds: vicBounds, strictBounds: false }, // can't pan outside Victoria
     minZoom: 6 // stop zooming out past the state

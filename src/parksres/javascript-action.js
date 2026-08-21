@@ -195,7 +195,7 @@
       cursor: pointer;
     }
     #drop-pin-btn:hover { background: var(--accent-soft); }
-    #drop-pin-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    #drop-pin-btn:disabled { opacity: .45; cursor: default; }
     #pins-empty { color: #777; font-style: italic; }
     #pins-holder {
       list-style: none;
@@ -315,7 +315,6 @@ const vicBounds = { north: -32.9, south: -40.2, east: 150.0, west: 140.9 };
 
 // ---- pin-drop state ----
 let userPins = [];                 // [{ id, lat, lng, marker }]
-let pinMode = false;               // is the "Drop a pin" button armed?
 let pinCounter = 0;                // gives each pin a stable id
 let AdvancedMarkerElement = null;  // loaded from the Maps "marker" library
 const PIN_CATEGORY = "other";      // category reported for user-dropped pins
@@ -461,6 +460,9 @@ function renderPins() {
   if (count) count.textContent = userPins.length;
   if (empty) empty.style.display = userPins.length ? "none" : "";
 
+  const undo = document.getElementById("drop-pin-btn");
+  if (undo) undo.disabled = !userPins.length;
+
   userPins.forEach(function (pin) {
     const chip = document.createElement("li");
     chip.className = "chip";
@@ -495,13 +497,17 @@ function addPin(lat, lng) {
     map: map,
     position: { lat: lat, lng: lng },
     gmpDraggable: true,
-    title: "Dropped pin " + pinCounter
+    gmpClickable: true,
+    title: "Dropped pin " + pinCounter + " - tap to remove"
   });
 
   const pin = { id: pinCounter, lat: lat, lng: lng, label: label, marker: marker };
   pin.name = pinName(pin);
   userPins.push(pin);
   registerPin(pin);
+
+  // tapping the pin again removes it
+  marker.addListener("click", function () { removePin(pin); });
 
   // keep coords in sync if the user drags the pin to a better spot
   marker.addListener("dragend", function () {
@@ -661,22 +667,17 @@ async function setupPinDrop() {
     return;
   }
 
-  // The button just arms/disarms "pin mode".
+  // The button now undoes the most recent pin instead of arming a mode.
+  btn.textContent = "↩ Undo last pin";
+  btn.disabled = true;
   btn.addEventListener("click", function () {
-    pinMode = !pinMode;
-    btn.classList.toggle("active", pinMode);
-    btn.textContent = pinMode ? "📍 Click the map to place your pin…" : "📍 Drop a pin";
-    map.setOptions({ draggableCursor: pinMode ? "crosshair" : null });
+    const last = userPins[userPins.length - 1];
+    if (last) removePin(last);
   });
 
-  // While armed, the next click on the base map drops one pin.
+  // Any tap on the base map drops a pin - no mode to arm first.
   map.addListener("click", function (event) {
-    if (!pinMode) return;
     addPin(event.latLng.lat(), event.latLng.lng());
-    pinMode = false;
-    btn.classList.remove("active");
-    btn.textContent = "📍 Drop a pin";
-    map.setOptions({ draggableCursor: null });
   });
 }
 
