@@ -1,0 +1,9 @@
+- Finish entry points
+- Payload architecture
+- Refactor
+- Tests
+- Fix pin UI (live bug - counter stuck at 0)
+- Fix process-metro-data false success print
+- Confirm which js files are live
+- Decide: commit skills or keep local
+- Decide: circles for unmanaged parks?

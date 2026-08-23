@@ -4,7 +4,7 @@ import json
 import pandas as pd
 
 from parksres import config
-from parksres.scripts.common import normalise, read_parks, show
+from parksres.common import normalise, read_parks, show
 
 # GENERATED
 DEFAULT_COLOR = "#0B5EDA"
