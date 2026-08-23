@@ -7,3 +7,4 @@
 - Confirm which js files are live
 - Decide: commit skills or keep local
 - Decide: circles for unmanaged parks?
+- Payload deferred - works now, revisit as optimisation/stress work

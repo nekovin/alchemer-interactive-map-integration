@@ -40,7 +40,6 @@ def entry(park, row=None):
         "category": rename(row["category"]) if row is not None else UNMANAGED_CATEGORY,
         "label": row["name"] if row is not None else park["name"],
         "knownAs": bool(row["known_as"]) if row is not None else False,
-        "managed": row is not None,
     }
 
 
@@ -64,7 +63,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Build parks_vic_data.json from parks_data.json + types.csv")
     parser.add_argument("-a", "--all", action="store_true",
-                        help="include every park, flagged managed true/false")
+                        help="include every park, uncategorised ones tagged Other")
     args = parser.parse_args()
 
     types = read_types()
@@ -76,9 +75,9 @@ def main():
     show(pd.DataFrame(
         [{k: v for k, v in p.items() if k != "coords"} for p in parks_vic]
     ))
-    managed = sum(p["managed"] for p in parks_vic)
+    listed = sum(p["category"] != UNMANAGED_CATEGORY for p in parks_vic)
     print(f"\n{len(types)} matched entries -> {len(parks_vic)} parks "
-          f"({managed} managed, {len(parks_vic) - managed} unmanaged)")
+          f"({listed} categorised, {len(parks_vic) - listed} {UNMANAGED_CATEGORY})")
     print(f"\n-> {config.PARKS_VIC_JSON}")
 # END GENERATED
 
