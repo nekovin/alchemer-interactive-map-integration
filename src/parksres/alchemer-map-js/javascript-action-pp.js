@@ -354,11 +354,12 @@ function renderSelections() {
   const selectedHolder = document.getElementById("selected-holder");
   const selectedCount = document.getElementById("selected-count");
   const selectedEmpty = document.getElementById("selected-empty");
-  if (!selectedHolder) return;
-
-  selectedHolder.innerHTML = "";
+  // counter must update even if the list container is missing
   if (selectedCount) selectedCount.textContent = userSelections.length;
   if (selectedEmpty) selectedEmpty.style.display = userSelections.length ? "none" : "";
+
+  if (!selectedHolder) return;
+  selectedHolder.innerHTML = "";
 
   userSelections.forEach(function (name) {
     const entry = parkRegistry.get(name);

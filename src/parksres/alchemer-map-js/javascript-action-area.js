@@ -202,7 +202,7 @@
 
 console.log("[PARKMAP] JS action loaded (v3)");
 
-const finalAzureUrl = '[question("value"), id="182"]'; 
+const finalAzureUrl = '[question("value"), id="TODO"]';  // SET ME - areas_data.json url, NOT the parks url (182)
 const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
 const ALCHEMER_HIDDEN_FIELD_ID = "sgE-TODO-area-name-element";   // SET ME - area name
 
@@ -303,11 +303,12 @@ function renderSelections() {
   const selectedHolder = document.getElementById("selected-holder");
   const selectedCount = document.getElementById("selected-count");
   const selectedEmpty = document.getElementById("selected-empty");
-  if (!selectedHolder) return;
-
-  selectedHolder.innerHTML = "";
+  // counter must update even if the list container is missing
   if (selectedCount) selectedCount.textContent = userSelections.length;
   if (selectedEmpty) selectedEmpty.style.display = userSelections.length ? "none" : "";
+
+  if (!selectedHolder) return;
+  selectedHolder.innerHTML = "";
 
   userSelections.forEach(function (name) {
     const entry = parkRegistry.get(name);
