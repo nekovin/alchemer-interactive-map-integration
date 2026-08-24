@@ -471,14 +471,15 @@ function renderPins() {
   const holder = document.getElementById("pins-holder");
   const count = document.getElementById("pin-count");
   const empty = document.getElementById("pins-empty");
-  if (!holder) return;
-
-  holder.innerHTML = "";
+  // counter and undo state must update even if the list container is missing
   if (count) count.textContent = userPins.length;
   if (empty) empty.style.display = userPins.length ? "none" : "";
 
   const undo = document.getElementById("drop-pin-btn");
   if (undo) undo.disabled = !userPins.length;
+
+  if (!holder) return;
+  holder.innerHTML = "";
 
   userPins.forEach(function (pin) {
     const chip = document.createElement("li");

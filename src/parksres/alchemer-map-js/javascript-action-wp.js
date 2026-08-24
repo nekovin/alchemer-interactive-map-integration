@@ -417,11 +417,12 @@ function renderPins() {
   const holder = document.getElementById("pins-holder");
   const count = document.getElementById("pin-count");
   const empty = document.getElementById("pins-empty");
-  if (!holder) return;
-
-  holder.innerHTML = "";
+  // counter must update even if the list container is missing
   if (count) count.textContent = userPins.length;
   if (empty) empty.style.display = userPins.length ? "none" : "";
+
+  if (!holder) return;
+  holder.innerHTML = "";
 
   userPins.forEach(function (pin) {
     const chip = document.createElement("li");

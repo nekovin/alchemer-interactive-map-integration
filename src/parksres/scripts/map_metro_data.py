@@ -67,7 +67,9 @@ def main(argv: Sequence[str] | None=None) -> None:
 
     if save:
         table.to_csv(config.METRO_CSV, index=False)
-    print(f"\n-> {config.METRO_CSV}")
+        print(f"\n-> {config.METRO_CSV}")
+    else:
+        print("\nnot saved (use --save)")
 # END GENERATED
 
 
