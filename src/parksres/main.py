@@ -2,25 +2,21 @@ import argparse
 import subprocess
 import sys
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description=""
     )
+
+    _args = parser.parse_args(argv)
     
-    #parser.add_value = parser.add_argument(
-    #    "-- script"
-    #)
-    
-    args = parser.parse_args()
-    
-    if args.__sizeof__ == 0:
-        res = subprocess.run(
-            [sys.executable, "process-metro-data"],
-            capture_output=True,
-            text=True
-        )
-        
-        print(res)
+    if not sys.argv[1:]:
+        from parksres import gdb_to_json, build_parks_vic, add_centres
+        from parksres.scripts import map_metro_data, map_types
+        gdb_to_json.main()
+        map_metro_data.main(["--save"])
+        map_types.main()
+        build_parks_vic.main(["-a"])
+        add_centres.main()
 
 if __name__ == '__main__':
     main()
