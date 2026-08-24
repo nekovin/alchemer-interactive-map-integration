@@ -2,3 +2,5 @@
 - Tests
 - Payload deferred - works now, revisit as optimisation/stress work
 - Address crown land code (currently unused)
+- Circles shouldnt overlap
+- Postcode map implementation
