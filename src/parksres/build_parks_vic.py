@@ -4,14 +4,12 @@ import json
 import pandas as pd
 
 from parksres import config
+from parksres.config import DEFAULT_COLOR, SELECTED_COLOR, UNMANAGED_COLOR
 from parksres.common import normalise, read_parks, show
 
 from collections.abc import Sequence
 
 # GENERATED
-DEFAULT_COLOR = "#0B5EDA"
-SELECTED_COLOR = "#FF0000"
-UNMANAGED_COLOR = "#2E7D32"
 
 UNMANAGED_CATEGORY = "Other"
 
