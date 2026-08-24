@@ -16,6 +16,6 @@ jobs:
         run: zip -r releases/alchemer-map-artifact.zip src/parksres/alchemer-map-js/ src/parksres/alchemer-html/ 
 
       - name: Create Release and Upload Asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: releases/alchemer-map-artifact.zip
