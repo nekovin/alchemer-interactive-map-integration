@@ -1,8 +1,8 @@
 import argparse
-import subprocess
 import sys
+from collections.abc import Sequence
 
-def main(argv=None):
+def main(argv: Sequence[str] | None=None) -> None:
     parser = argparse.ArgumentParser(
         description=""
     )

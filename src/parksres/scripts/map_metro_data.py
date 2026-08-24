@@ -38,8 +38,10 @@ def map_data(metro, parks):
 
 class Args(Namespace):
     save: bool
+    
+from collections.abc import Sequence
 
-def main():
+def main(argv: Sequence[str] | None=None) -> None:
     
     parser = ArgumentParser(
         description="Add 'save' if you want to save the data"

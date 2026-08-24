@@ -6,6 +6,8 @@ import pandas as pd
 from parksres import config
 from parksres.common import normalise, read_parks, show
 
+from collections.abc import Sequence
+
 # GENERATED
 DEFAULT_COLOR = "#0B5EDA"
 SELECTED_COLOR = "#FF0000"
@@ -59,7 +61,7 @@ def build(types, parks, keep_all=False):
     return list(out.values())
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Build parks_vic_data.json from parks_data.json + types.csv")
     parser.add_argument("-a", "--all", action="store_true",
