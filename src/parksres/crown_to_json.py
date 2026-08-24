@@ -3,14 +3,13 @@ import json
 import geopandas as gpd
 import pandas as pd
 
-from parksres import config
+from . import config
+from .config import DEFAULT_COLOR, SELECTED_COLOR
 
 # GENERATED
 NAME_FIELD = "NAME"
 TYPE_FIELD = "AREA_TYPE"
 
-DEFAULT_COLOR = "#0B5EDA"
-SELECTED_COLOR = "#FF0000"
 
 
 def ring(coords):

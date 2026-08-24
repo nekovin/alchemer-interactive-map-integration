@@ -1,0 +1,21 @@
+name: Publish Folder Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Zip the specific folder
+        run: zip -r releases/alchemer-map-artifact.zip src/parksres/alchemer-map-js/ src/parksres/alchemer-html/ 
+
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: releases/alchemer-map-artifact.zip

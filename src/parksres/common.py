@@ -3,7 +3,7 @@ import re
 
 import pandas as pd
 
-from parksres import config
+from . import config
 
 # GENERATED
 ABBREVIATIONS = {

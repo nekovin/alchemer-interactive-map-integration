@@ -4,12 +4,12 @@ import json
 import pandas as pd
 
 from parksres import config
-from parksres.scripts.common import normalise, read_parks, show
+from parksres.config import DEFAULT_COLOR, SELECTED_COLOR, UNMANAGED_COLOR
+from parksres.common import normalise, read_parks, show
+
+from collections.abc import Sequence
 
 # GENERATED
-DEFAULT_COLOR = "#0B5EDA"
-SELECTED_COLOR = "#FF0000"
-UNMANAGED_COLOR = "#2E7D32"
 
 UNMANAGED_CATEGORY = "Other"
 
@@ -40,7 +40,6 @@ def entry(park, row=None):
         "category": rename(row["category"]) if row is not None else UNMANAGED_CATEGORY,
         "label": row["name"] if row is not None else park["name"],
         "knownAs": bool(row["known_as"]) if row is not None else False,
-        "managed": row is not None,
     }
 
 
@@ -60,12 +59,12 @@ def build(types, parks, keep_all=False):
     return list(out.values())
 
 
-def main():
+def main(argv: Sequence[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Build parks_vic_data.json from parks_data.json + types.csv")
     parser.add_argument("-a", "--all", action="store_true",
-                        help="include every park, flagged managed true/false")
-    args = parser.parse_args()
+                        help="include every park, uncategorised ones tagged Other")
+    args = parser.parse_args(argv)
 
     types = read_types()
     parks_vic = build(types, read_parks(), keep_all=args.all)
@@ -76,9 +75,9 @@ def main():
     show(pd.DataFrame(
         [{k: v for k, v in p.items() if k != "coords"} for p in parks_vic]
     ))
-    managed = sum(p["managed"] for p in parks_vic)
+    listed = sum(p["category"] != UNMANAGED_CATEGORY for p in parks_vic)
     print(f"\n{len(types)} matched entries -> {len(parks_vic)} parks "
-          f"({managed} managed, {len(parks_vic) - managed} unmanaged)")
+          f"({listed} categorised, {len(parks_vic) - listed} {UNMANAGED_CATEGORY})")
     print(f"\n-> {config.PARKS_VIC_JSON}")
 # END GENERATED
 

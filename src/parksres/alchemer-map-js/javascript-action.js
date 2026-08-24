@@ -195,7 +195,7 @@
       cursor: pointer;
     }
     #drop-pin-btn:hover { background: var(--accent-soft); }
-    #drop-pin-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    #drop-pin-btn:disabled { opacity: .45; cursor: default; }
     #pins-empty { color: #777; font-style: italic; }
     #pins-holder {
       list-style: none;
@@ -206,6 +206,18 @@
       gap: 8px;
     }
     #pins-holder:empty { display: none; }
+    #park-map-wrapper .pin-name {
+      width: 11ch;
+      min-width: 0;
+      padding: 2px 6px;
+      font: inherit;
+      font-size: 13px;
+      color: var(--accent-dark);
+      background: #fff;
+      border: 1px solid var(--accent-border);
+      border-radius: 4px;
+    }
+    #park-map-wrapper .pin-coords { font-size: 11px; color: #777; }
   `;
   const styleEl = document.createElement("style");
   styleEl.textContent = css;
@@ -229,11 +241,13 @@ console.log("[PARKMAP] JS action loaded (v3)");
 
 const finalAzureUrl = '[question("value"), id="182"]'; 
 const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
+const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-28-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
+const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-28-64-element";
+const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-28-170-element";
+const EXCLUDED_CATEGORIES = ['PP', 'WP'];
 
-const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-27-159-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
-const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-27-160-element";
-const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-27-177-element"
-const EXCLUDED_CATEGORIES = ['WP']
+console.log("Azure URL", finalAzureUrl);
+console.log("Google URL", GOOGLE_MAPS_KEY);
 
 
 /* =========================================================================
@@ -312,9 +326,10 @@ const vicBounds = { north: -32.9, south: -40.2, east: 150.0, west: 140.9 };
 
 // ---- pin-drop state ----
 let userPins = [];                 // [{ id, lat, lng, marker }]
-let pinMode = false;               // is the "Drop a pin" button armed?
 let pinCounter = 0;                // gives each pin a stable id
 let AdvancedMarkerElement = null;  // loaded from the Maps "marker" library
+const PIN_CATEGORY = "other";      // category reported for user-dropped pins
+const DEFAULT_PIN_LABEL = "Other Park";
 
 /* ---------- Alchemer sync (runs on every change, no submit button needed) ---------- */
 function updateAlchemerField() {
@@ -323,17 +338,20 @@ function updateAlchemerField() {
     console.warn("[PARKMAP] Hidden field not found:", ALCHEMER_HIDDEN_FIELD_ID);
     return;
   }
-	alchemerField.value = userSelections.join(", ");
+  alchemerField.value = userSelections.join(", ");
   alchemerField.dispatchEvent(new Event("change", { bubbles: true }));
 
   // same order as the names above, so index N is that park's category
   const categoryField = document.getElementById(ALCHEMER_CATEGORY_FIELD_ID);
-  if (!categoryField) return;
-  categoryField.value = userSelections.map(function (name) {
-    const entry = parkRegistry.get(name);
-    return (entry && entry.park.category) || "";
-  }).join(", ");
-  categoryField.dispatchEvent(new Event("change", { bubbles: true }));
+  if (categoryField) {
+    categoryField.value = userSelections.map(function (name) {
+      const entry = parkRegistry.get(name);
+      return (entry && entry.park.category) || "";
+    }).join(", ");
+    categoryField.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  console.log("Current Selections Array:", userSelections);
 }
 
 // Write the dropped pins into the SECOND Alchemer field as "lat,lng; lat,lng".
@@ -384,8 +402,10 @@ function renderSelections() {
 
 /* ---------- single source of truth for select / deselect ---------- */
 function setSelected(entry, selected) {
+  if (!selected && entry.pin) { removePin(entry.pin); return; } // pins are removed, not deselected
+
   entry.selected = selected;
-  entry.polygon.setOptions({
+  if (entry.polygon) entry.polygon.setOptions({
     fillColor: selected ? entry.park.selectedColor : entry.park.defaultColor,
     strokeColor: selected ? entry.park.selectedColor : entry.park.defaultColor
   });
@@ -398,7 +418,6 @@ function setSelected(entry, selected) {
 
   renderSelections();
   updateAlchemerField();
-  console.log("Current Selections Array:", userSelections);
 }
 
 /* ---------- dropped pins (for areas the park polygons don't cover) ---------- */
@@ -412,23 +431,71 @@ function coordsOf(marker) {
   };
 }
 
+// "Other Park - Lat: X Long: Y"
+function pinName(pin) {
+  return pin.label + " - Lat: " + pin.lat.toFixed(5) + " Long: " + pin.lng.toFixed(5);
+}
+
+// A pin joins the registry as a polygon-less park so it flows through the normal fields.
+function registerPin(pin) {
+  const park = {
+    id: "pin_" + pin.id,
+    name: pin.name,
+    category: PIN_CATEGORY,
+    coords: [[{ lat: pin.lat, lng: pin.lng }]]
+  };
+  parkRegistry.set(pin.name, { park: park, polygon: null, selected: true, pin: pin });
+  if (!userSelections.includes(pin.name)) userSelections.push(pin.name);
+}
+
+function unregisterPin(pin) {
+  parkRegistry.delete(pin.name);
+  userSelections = userSelections.filter(function (name) { return name !== pin.name; });
+}
+
+// Rename in place: the name is the registry key, so it has to be re-keyed.
+function renamePin(pin, label) {
+  // commas would split this entry in two when the next page splits on ","
+  const clean = (label || "").replace(/,/g, " ").trim() || DEFAULT_PIN_LABEL;
+  unregisterPin(pin);
+  pin.label = clean;
+  pin.name = pinName(pin);
+  registerPin(pin);
+  renderPins();
+  renderSelections();
+  updateAlchemerField();
+}
+
 // Render the pins as removable chips (mirrors renderSelections).
 function renderPins() {
   const holder = document.getElementById("pins-holder");
   const count = document.getElementById("pin-count");
   const empty = document.getElementById("pins-empty");
-  if (!holder) return;
-
-  holder.innerHTML = "";
+  // counter and undo state must update even if the list container is missing
   if (count) count.textContent = userPins.length;
   if (empty) empty.style.display = userPins.length ? "none" : "";
+
+  const undo = document.getElementById("drop-pin-btn");
+  if (undo) undo.disabled = !userPins.length;
+
+  if (!holder) return;
+  holder.innerHTML = "";
 
   userPins.forEach(function (pin) {
     const chip = document.createElement("li");
     chip.className = "chip";
 
-    const label = document.createElement("span");
-    label.textContent = "Pin " + pin.id + " (" + pin.lat.toFixed(4) + ", " + pin.lng.toFixed(4) + ")";
+    const label = document.createElement("input");
+    label.type = "text";
+    label.className = "pin-name";
+    label.value = pin.label;
+    label.title = "Name this place";
+    label.setAttribute("aria-label", "Name for pin " + pin.id);
+    label.addEventListener("change", function () { renamePin(pin, label.value); });
+
+    const coords = document.createElement("span");
+    coords.className = "pin-coords";
+    coords.textContent = pin.lat.toFixed(4) + " " + pin.lng.toFixed(4);
 
     const remove = document.createElement("button");
     remove.type = "button";
@@ -439,6 +506,7 @@ function renderPins() {
     remove.addEventListener("click", function () { removePin(pin); });
 
     chip.appendChild(label);
+    chip.appendChild(coords);
     chip.appendChild(remove);
     holder.appendChild(chip);
   });
@@ -447,37 +515,54 @@ function renderPins() {
 // Drop a new draggable pin at the given coordinates.
 function addPin(lat, lng) {
   if (!AdvancedMarkerElement) return; // marker library didn't load
+
   pinCounter += 1;
 
   const marker = new AdvancedMarkerElement({
     map: map,
     position: { lat: lat, lng: lng },
     gmpDraggable: true,
-    title: "Dropped pin " + pinCounter
+    gmpClickable: true,
+    title: "Dropped pin " + pinCounter + " - tap to remove"
   });
 
-  const pin = { id: pinCounter, lat: lat, lng: lng, marker: marker };
+  const pin = { id: pinCounter, lat: lat, lng: lng, label: DEFAULT_PIN_LABEL, marker: marker };
+  pin.name = pinName(pin);
   userPins.push(pin);
+  registerPin(pin);
+
+  // tapping the pin again removes it
+  marker.addListener("click", function () { removePin(pin); });
 
   // keep coords in sync if the user drags the pin to a better spot
   marker.addListener("dragend", function () {
     const c = coordsOf(marker);
+    unregisterPin(pin);
     pin.lat = c.lat;
     pin.lng = c.lng;
+    pin.name = pinName(pin);
+    registerPin(pin);
     renderPins();
+    renderSelections();
     updatePinField();
+    updateAlchemerField();
   });
 
   renderPins();
+  renderSelections();
   updatePinField();
+  updateAlchemerField();
 }
 
 // Remove a pin from the map and the list.
 function removePin(pin) {
   pin.marker.map = null; // detaches the marker from the map
   userPins = userPins.filter(function (p) { return p.id !== pin.id; });
+  unregisterPin(pin);
   renderPins();
+  renderSelections();
   updatePinField();
+  updateAlchemerField();
 }
 
 /* ---------- build steps ---------- */
@@ -511,16 +596,15 @@ function injectMapsScriptOnce() {
 function drawPolygons(parkData) {
   if (parkRegistry.size) return; // idempotent - don't redraw on retry
   parkData.forEach(function (park) {
-    const polygonHighlight = new google.maps.Circle({
-    center: park.center,
-    radius: 3000,
-    strokeColor: park.defaultColor,
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: park.defaultColor,
-    fillOpacity: 0.35,
-    map: map
-  });
+    const polygonHighlight = new google.maps.Polygon({
+      paths: park.coords,
+      strokeColor: park.defaultColor,
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: park.defaultColor,
+      fillOpacity: 0.35,
+      map: map
+    });
     const entry = { park: park, polygon: polygonHighlight, selected: false };
     parkRegistry.set(park.name, entry);
     google.maps.event.addListener(polygonHighlight, "click", function () {
@@ -595,8 +679,7 @@ function setupSearch(parkData) {
 
 // Pin drop: let respondents mark a spot the park polygons don't cover.
 async function setupPinDrop() {
-  const btn = document.getElementById("drop-pin-btn");
-  if (!btn) return;
+  const btn = document.getElementById("drop-pin-btn"); // optional - undo only
 
   // Advanced Markers live in the "marker" library - load it before we allow drops.
   try {
@@ -604,26 +687,23 @@ async function setupPinDrop() {
     AdvancedMarkerElement = markerLib.AdvancedMarkerElement;
   } catch (e) {
     console.error("[pins] marker library failed to load:", e);
-    btn.style.display = "none"; // hide the feature rather than offer a broken button
+    if (btn) btn.style.display = "none"; // hide the feature rather than offer a broken button
     return;
   }
 
-  // The button just arms/disarms "pin mode".
-  btn.addEventListener("click", function () {
-    pinMode = !pinMode;
-    btn.classList.toggle("active", pinMode);
-    btn.textContent = pinMode ? "📍 Click the map to place your pin…" : "📍 Drop a pin";
-    map.setOptions({ draggableCursor: pinMode ? "crosshair" : null });
-  });
+  // The button now undoes the most recent pin instead of arming a mode.
+  if (btn) {
+    btn.textContent = "↩ Undo last pin";
+    btn.disabled = true;
+    btn.addEventListener("click", function () {
+      const last = userPins[userPins.length - 1];
+      if (last) removePin(last);
+    });
+  }
 
-  // While armed, the next click on the base map drops one pin.
+  // Any tap on the base map drops a pin - no mode to arm first.
   map.addListener("click", function (event) {
-    if (!pinMode) return;
     addPin(event.latLng.lat(), event.latLng.lng());
-    pinMode = false;
-    btn.classList.remove("active");
-    btn.textContent = "📍 Drop a pin";
-    map.setOptions({ draggableCursor: null });
   });
 }
 
@@ -643,12 +723,12 @@ function buildMap() {
   }
 
   const parkData = window.azureParksData.filter(function (park) {
-    		return EXCLUDED_CATEGORIES.includes(park.category);
+    		return !EXCLUDED_CATEGORIES.includes(park.category);
   });
 
   map = new google.maps.Map(mapElement, {
     zoom: 9,
-    center: { lat: -38.332104, lng: 145.354267 },
+    center: { lat: -37.8080, lng: 144.9750 },
     mapId: "DEMO_MAP_ID", // Advanced Markers (pins) require a Map ID - swap for a real one for production
     restriction: { latLngBounds: vicBounds, strictBounds: false }, // can't pan outside Victoria
     minZoom: 6 // stop zooming out past the state
@@ -698,7 +778,3 @@ async function start() {
 window.initAlchemerMap = start;
 
 start();
-
-setTimeout(function(){
-  $("#sg_NextButton").on('click', function(){ return confirm("Are you sure you didn't go to any other piers or jetties?");});
-},200);

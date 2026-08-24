@@ -1,0 +1,58 @@
+<div id="park-map-wrapper">
+    <p>Click on a park to select it, or use the search boxes below.</p>
+    <!-- side-by-side: Google Places location search + park-name filter -->
+    
+    <div class="search-row">
+    <div class="search-col"><label>Find a location</label> <!-- Google Places autocomplete gets injected here; moves the map to a place -->
+    
+    <div id="location-search"> </div>
+    
+    <div id="places-notice" style="display:none;">Location search is unavailable right now.<button class="retry-link" type="button">Retry</button></div>
+    </div>
+    <!--
+            <div class="search-col">
+                <label for="searchbar">Search for a park</label>
+                <div class="search-box">
+                    <svg width="25" height="24" fill="none" viewBox="0 0 25 24"><path fill="#5e5e5e" fill-rule="evenodd" d="M15.56 13.27 21.29 19l-1.49 1.49-5.73-5.73A6.4 6.4 0 0110.3 16a6.5 6.5 0 116.5-6.5c0 1.41-.47 2.7-1.24 3.77M10.3 5a4.5 4.5 0 10-.01 8.99A4.5 4.5 0 0010.3 5" clip-rule="evenodd"></path></svg>
+                    <input id="searchbar" type="text" />
+                </div>
+                <ul id="list-holder"></ul>
+            </div>
+        --></div>
+    <!-- map + loading skeleton + error overlay -->
+    
+    <div id="map-wrap">
+    <div id="map"> </div>
+    
+    <div id="map-loader">
+    <div class="spinner"> </div>
+    
+    <div class="loader-text">Loading map…</div>
+    </div>
+    
+    <div id="map-error" style="display:none;">
+    <div class="error-icon">⚠️</div>
+    
+    <div class="error-text"> </div>
+    <button class="retry-btn" type="button">Try again</button></div>
+    </div>
+    
+    <h3>Your selected parks (<span id="selected-count">0</span>)</h3>
+    
+    <p id="selected-empty">No parks selected yet.</p>
+    
+    <ul id="selected-holder">
+        <li> </li>
+    </ul>
+    
+    <h3>Other places you marked (<span id="pin-count">0</span>)</h3>
+    
+    <p id="pins-empty"> </p>
+    
+    <ul id="pins-holder">
+        <li>&nbsp;</li>
+    </ul>
+    
+    <button id="drop-pin-btn" type="button">Undo last pin</button>
+    </div>
+    
