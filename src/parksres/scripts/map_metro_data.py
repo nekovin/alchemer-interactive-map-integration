@@ -51,7 +51,7 @@ def main(argv: Sequence[str] | None=None) -> None:
     
     parser.add_argument('--save', action="store_true")
     
-    args: Args = parser.parse_args()
+    args: Args = parser.parse_args(argv)
     
     save = args.save
     

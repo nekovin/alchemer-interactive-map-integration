@@ -66,7 +66,7 @@ def main(argv: Sequence[str] | None = None):
         description="Build parks_vic_data.json from parks_data.json + types.csv")
     parser.add_argument("-a", "--all", action="store_true",
                         help="include every park, uncategorised ones tagged Other")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     types = read_types()
     parks_vic = build(types, read_parks(), keep_all=args.all)
