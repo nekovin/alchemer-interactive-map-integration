@@ -227,12 +227,12 @@
 
 console.log("[PARKMAP] JS action loaded (v3)");
 
-const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/4463.json?sp=r&st=2026-08-24T01:04:50Z&se=2026-08-31T09:19:50Z&spr=https&sv=2026-02-06&sr=b&sig=KTC1IlMpYQfUAyayQacmxvd66JcpsDl3MzBbH%2BiBlVE%3D';//'[question("value"), id="182"]'; 
+const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/4463_2.json?sp=r&st=2026-08-26T06:58:25Z&se=2026-08-26T15:13:25Z&spr=https&sv=2026-02-06&sr=b&sig=%2B7Q6g5e3YmqfyWG%2Bxho7Tj2ZivEyQyQI1Fk7X3dmNSg%3D';
 const GOOGLE_MAPS_KEY = 'AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE';//'[question("value"), id="181"]';
 
 const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-26-154-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
-const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-28-155-element";
-const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-28-176-element"
+const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-26-155-element";
+const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-26-176-element"
 const EXCLUDED_CATEGORIES = ['PP']
 
 
