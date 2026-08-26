@@ -10,8 +10,7 @@ from parksres import config
 CENTER_KEY = "center"
 RADIUS_KEY = "radius"
 
-CIRCLE_CATEGORIES = ("PP", "WP")
-MAX_RADIUS = 3000
+MAX_RADIUS = {"PP": 2000, "WP": 1000}
 MIN_RADIUS = 250
 METRIC_CRS = "EPSG:3111"
 
@@ -30,19 +29,20 @@ def add_radii(parks):
 
     groups = {}
     for park in parks:
-        if park.get("category") in CIRCLE_CATEGORIES and park.get(CENTER_KEY):
+        if park.get("category") in MAX_RADIUS and park.get(CENTER_KEY):
             groups.setdefault(park["category"], []).append(park)
 
     shrunk = 0
-    for members in groups.values():
+    for category, members in groups.items():
+        cap = MAX_RADIUS[category]
         points = [to_metres.transform(p[CENTER_KEY]["lng"], p[CENTER_KEY]["lat"])
                   for p in members]
         for i, park in enumerate(members):
             gaps = [math.dist(points[i], points[j])
                     for j in range(len(members)) if j != i]
-            radius = MAX_RADIUS if not gaps else min(MAX_RADIUS, min(gaps) / 2)
+            radius = cap if not gaps else min(cap, min(gaps) / 2)
             park[RADIUS_KEY] = int(max(MIN_RADIUS, radius))
-            shrunk += park[RADIUS_KEY] < MAX_RADIUS
+            shrunk += park[RADIUS_KEY] < cap
     return groups, shrunk
 
 
@@ -78,7 +78,7 @@ def main():
         json.dump(parks, file, indent=4)
 
     print(f"{len(parks)} parks, {added} with a centre -> {config.PARKS_VIC_JSON}")
-    print(f"{circles} circles, {shrunk} shrunk below {MAX_RADIUS}m, "
+    print(f"{circles} circles, {shrunk} shrunk below cap, "
           f"{remaining} overlapping pairs remaining")
 # END GENERATED
 

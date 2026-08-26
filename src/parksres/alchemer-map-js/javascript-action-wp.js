@@ -514,7 +514,7 @@ function drawPolygons(parkData) {
   parkData.forEach(function (park) {
     const polygonHighlight = new google.maps.Circle({
     center: park.center,
-    radius: 1000,
+    radius: park.radius || 1000,
     strokeColor: park.defaultColor,
     strokeOpacity: 0.8,
     strokeWeight: 2,
