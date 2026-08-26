@@ -1,4 +1,10 @@
 - Refactor
 - Tests
 - Payload deferred - works now, revisit as optimisation/stress work
+<<<<<<< Updated upstream
 - Circles shouldnt overlap
+=======
+- Address crown land code (currently unused)
+- Circles shouldnt overlap
+- Postcode map implementation- Non-overlapping circles (shrink to half nearest-neighbour distance)
+>>>>>>> Stashed changes

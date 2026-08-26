@@ -227,10 +227,10 @@
 
 console.log("[PARKMAP] JS action loaded (v3)");
 
-const finalAzureUrl = '[question("value"), id="182"]'; 
-const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
+const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/4463.json?sp=r&st=2026-08-24T01:04:50Z&se=2026-08-31T09:19:50Z&spr=https&sv=2026-02-06&sr=b&sig=KTC1IlMpYQfUAyayQacmxvd66JcpsDl3MzBbH%2BiBlVE%3D';//'[question("value"), id="182"]'; 
+const GOOGLE_MAPS_KEY = 'AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE';//'[question("value"), id="181"]';
 
-const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-28-154-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
+const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-26-154-element";//"sgE-391014007-2-63-element"; // THIS NEEDS TO BE MAINTAINED IF SOMEBODY SCREWS W MY CODE >:(
 const ALCHEMER_PIN_FIELD_ID = "sgE-391042299-28-155-element";
 const ALCHEMER_CATEGORY_FIELD_ID = "sgE-391042299-28-176-element"
 const EXCLUDED_CATEGORIES = ['PP']
@@ -354,12 +354,11 @@ function renderSelections() {
   const selectedHolder = document.getElementById("selected-holder");
   const selectedCount = document.getElementById("selected-count");
   const selectedEmpty = document.getElementById("selected-empty");
-  // counter must update even if the list container is missing
+  if (!selectedHolder) return;
+
+  selectedHolder.innerHTML = "";
   if (selectedCount) selectedCount.textContent = userSelections.length;
   if (selectedEmpty) selectedEmpty.style.display = userSelections.length ? "none" : "";
-
-  if (!selectedHolder) return;
-  selectedHolder.innerHTML = "";
 
   userSelections.forEach(function (name) {
     const entry = parkRegistry.get(name);
@@ -515,7 +514,7 @@ function drawPolygons(parkData) {
   parkData.forEach(function (park) {
     const polygonHighlight = new google.maps.Circle({
     center: park.center,
-    radius: 3000,
+    radius: 2000,
     strokeColor: park.defaultColor,
     strokeOpacity: 0.8,
     strokeWeight: 2,
@@ -649,7 +648,7 @@ function buildMap() {
   });
 
   map = new google.maps.Map(mapElement, {
-    zoom: 9,
+    zoom: 10,
     center: { lat: -38.108827, lng: 144.833213 },
     mapId: "DEMO_MAP_ID", // Advanced Markers (pins) require a Map ID - swap for a real one for production
     restriction: { latLngBounds: vicBounds, strictBounds: false }, // can't pan outside Victoria
@@ -701,6 +700,7 @@ window.initAlchemerMap = start;
 
 start();
 
-setTimeout(function(){
-  $("#sg_NextButton").on('click', function(){ return confirm("Are you sure you didn't go to any other piers or jetties?");});
-},200);
+setTimeout(function(){$('.sg-button-bar').hide();},200);
+
+($('<input id="confirm" type="button" class="sg-button" aria-label="Confirm" value="Confirm Selection" style="width:auto;">')).insertAfter($('#selected-holder'));
+$('#confirm').on('click',function(){$('.sg-button-bar').show()});

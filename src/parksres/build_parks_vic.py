@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 
 import pandas as pd
 
@@ -29,16 +30,21 @@ def read_types():
     return types[types["matched"]]
 
 
+def clean(name):
+    return re.sub(r"\s+", " ", str(name).replace(",", " ")).strip()
+
+
 def entry(park, row=None):
+    name = clean(park["name"])
     return {
-        "id": park["name"].lower().replace(" ", "_"),
-        "name": park["name"],
+        "id": name.lower().replace(" ", "_"),
+        "name": name,
         "defaultColor": DEFAULT_COLOR if row is not None else UNMANAGED_COLOR,
         "selectedColor": SELECTED_COLOR,
         "coords": park["coords"],
         "type": park.get("type"),
         "category": rename(row["category"]) if row is not None else UNMANAGED_CATEGORY,
-        "label": row["name"] if row is not None else park["name"],
+        "label": clean(row["name"]) if row is not None else name,
         "knownAs": bool(row["known_as"]) if row is not None else False,
     }
 
@@ -67,7 +73,8 @@ def main(argv: Sequence[str] | None = None):
     args = parser.parse_args(argv)
 
     types = read_types()
-    parks_vic = build(types, read_parks(), keep_all=args.all)
+    parks = read_parks()
+    parks_vic = build(types, parks, keep_all=args.all)
 
     with open(config.PARKS_VIC_JSON, "w") as file:
         json.dump(parks_vic, file, indent=4)
@@ -75,9 +82,11 @@ def main(argv: Sequence[str] | None = None):
     show(pd.DataFrame(
         [{k: v for k, v in p.items() if k != "coords"} for p in parks_vic]
     ))
+    commas = sum("," in p["name"] for p in parks)
     listed = sum(p["category"] != UNMANAGED_CATEGORY for p in parks_vic)
     print(f"\n{len(types)} matched entries -> {len(parks_vic)} parks "
           f"({listed} categorised, {len(parks_vic) - listed} {UNMANAGED_CATEGORY})")
+    print(f"{commas} source names had commas stripped")
     print(f"\n-> {config.PARKS_VIC_JSON}")
 # END GENERATED
 

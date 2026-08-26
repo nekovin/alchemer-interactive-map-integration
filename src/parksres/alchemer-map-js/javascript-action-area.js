@@ -280,6 +280,8 @@ const parkRegistry = new Map(); // park.name -> { park, polygon, selected }
 let map = null;
 let mapInitialized = false;      // idempotency guard
 let domWaitCount = 0;
+const FILL_UNSELECTED = 0;    // outline only until chosen
+const FILL_SELECTED = 0.35;
 const MAX_DOM_WAITS = 25;        // ~5s at 200ms - then surface an error instead of looping forever
 
 const vicBounds = { north: -32.9, south: -40.2, east: 150.0, west: 140.9 };
@@ -336,7 +338,7 @@ function renderSelections() {
 function setSelected(entry, selected) {
   entry.selected = selected;
   if (entry.polygon) entry.polygon.setOptions({
-    fillColor: selected ? entry.park.selectedColor : entry.park.defaultColor,
+    fillOpacity: selected ? FILL_SELECTED : FILL_UNSELECTED,
     strokeColor: selected ? entry.park.selectedColor : entry.park.defaultColor
   });
 
@@ -346,7 +348,7 @@ function setSelected(entry, selected) {
       if (other !== entry && other.selected) {
         other.selected = false;
         if (other.polygon) other.polygon.setOptions({
-          fillColor: other.park.defaultColor,
+          fillOpacity: FILL_UNSELECTED,
           strokeColor: other.park.defaultColor
         });
       }
@@ -399,8 +401,8 @@ function drawPolygons(parkData) {
       strokeColor: park.defaultColor,
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: park.defaultColor,
-      fillOpacity: 0.35,
+      fillColor: park.selectedColor,
+      fillOpacity: FILL_UNSELECTED,
       map: map
     });
     const entry = { park: park, polygon: polygonHighlight, selected: false };
