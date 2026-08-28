@@ -367,6 +367,19 @@ function updatePinField() {
   pinField.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
+
+function updateNav() {
+  const confirm = $('#confirm');
+
+  if (!confirm.length) return;
+
+  if (!userSelections.length) {
+    $('.sg-button-bar').hide();
+    confirm.show();
+  }
+}
+
+
 /* ---------- selected-parks chips ---------- */
 function renderSelections() {
   const selectedHolder = document.getElementById("selected-holder");
@@ -398,7 +411,10 @@ function renderSelections() {
     chip.appendChild(label);
     chip.appendChild(remove);
     selectedHolder.appendChild(chip);
+
   });
+  
+  updateNav();
 }
 
 /* ---------- single source of truth for select / deselect ---------- */
@@ -779,3 +795,13 @@ async function start() {
 window.initAlchemerMap = start;
 
 start();
+
+$(document).ready(function () {
+  $('<input id="confirm" type="button" class="sg-button" aria-label="Confirm" value="Confirm Selection" style="width:auto;">')
+    .insertAfter($('#selected-holder'));
+  $('#confirm').on('click', function () { $('.sg-button-bar').show(); });
+  updateNav();
+});
+
+
+
