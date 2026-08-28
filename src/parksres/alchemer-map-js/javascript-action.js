@@ -368,14 +368,18 @@ function updatePinField() {
 }
 
 
-function updateNav() {
-  const confirm = $('#confirm');
+function updateNav(confirmed) {
+  const confirmBtn = $('#confirm');
+  if (!confirmBtn.length) return;
 
-  if (!confirm.length) return;
+  const chosen = userSelections.length > 0;
 
-  if (!userSelections.length) {
+  if (confirmed && chosen) {
+    confirmBtn.hide();
+    $('.sg-button-bar').show();
+  } else {
+    confirmBtn.show().prop('disabled', !chosen);
     $('.sg-button-bar').hide();
-    confirm.show();
   }
 }
 
@@ -414,7 +418,7 @@ function renderSelections() {
 
   });
   
-  updateNav();
+  updateNav(false);
 }
 
 /* ---------- single source of truth for select / deselect ---------- */
@@ -799,8 +803,8 @@ start();
 $(document).ready(function () {
   $('<input id="confirm" type="button" class="sg-button" aria-label="Confirm" value="Confirm Selection" style="width:auto;">')
     .insertAfter($('#selected-holder'));
-  $('#confirm').on('click', function () { $('.sg-button-bar').show(); });
-  updateNav();
+  $('#confirm').on('click', function () { updateNav(true); });
+  updateNav(false);
 });
 
 

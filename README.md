@@ -1,12 +1,19 @@
-# PARKSRES - Alchemer Mapping
+# PARKSRES - Alchemer Mapping Component
 
 ## Data Sourcing
-PARKSRES
-CROWN
+- Data comes in as a GDB
 
 ## Preprocessing
-GOOGLEMAPS
+- Converted to JSON for readability
+
+## APIs
+Google maps
+Azure SAS
 
 ## Mapping
+Javascript
+HTML
+JQuery
 
 ## Maintenence
+Renewing google maps api and azure sas 

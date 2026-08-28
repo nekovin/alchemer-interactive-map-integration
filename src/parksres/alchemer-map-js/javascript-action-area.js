@@ -202,9 +202,9 @@
 
 console.log("[PARKMAP] JS action loaded (v3)");
 
-const finalAzureUrl = '[question("value"), id="TODO"]';  // SET ME - areas_data.json url, NOT the parks url (182)
-const GOOGLE_MAPS_KEY = '[question("value"), id="181"]';
-const ALCHEMER_HIDDEN_FIELD_ID = "sgE-TODO-area-name-element";   // SET ME - area name
+const finalAzureUrl = 'https://alchemer01.blob.core.windows.net/4463/parks_data/areas_data.json?sp=r&st=2026-08-24T22:41:03Z&se=2026-08-31T06:56:03Z&spr=https&sv=2026-02-06&sr=b&sig=BIu1LTc9dBHXq1P%2BDkqB%2F6BpjZ7GKFb7C1swTv1DhlE%3D';
+const GOOGLE_MAPS_KEY = 'AIzaSyBnhF8F278dHno51nyrbqBEQn_rELO4mQE'; //'[question("value"), id="181"]';
+const ALCHEMER_HIDDEN_FIELD_ID = "sgE-391042299-8-198-element";
 
 console.log("Azure URL", finalAzureUrl);
 console.log("Google URL", GOOGLE_MAPS_KEY);
@@ -298,6 +298,24 @@ function updateAlchemerField() {
   alchemerField.dispatchEvent(new Event("change", { bubbles: true }));
 
   console.log("Selected area:", userSelections[0] || "(none)");
+  
+  //$('.sg-button-bar').show();
+  
+}
+
+function updateNav(confirmed) {
+  const confirmBtn = $('#confirm');
+  if (!confirmBtn.length) return;
+
+  const chosen = userSelections.length > 0;
+
+  if (confirmed && chosen) {
+    confirmBtn.hide();
+    $('.sg-button-bar').show();
+  } else {
+    confirmBtn.show().prop('disabled', !chosen);
+    $('.sg-button-bar').hide();
+  }
 }
 
 /* ---------- selected-parks chips ---------- */
@@ -332,6 +350,10 @@ function renderSelections() {
     chip.appendChild(remove);
     selectedHolder.appendChild(chip);
   });
+  
+  console.log("Updating");
+  
+  updateNav(false);
 }
 
 /* ---------- single source of truth for select / deselect ---------- */
@@ -544,3 +566,12 @@ async function start() {
 window.initAlchemerMap = start;
 
 start();
+
+//setTimeout(function(){$('.sg-button-bar').hide();},200);
+
+$(document).ready(function () {
+  $('<input id="confirm" type="button" class="sg-button" aria-label="Confirm" value="Confirm Selection" style="width:auto;">')
+    .insertAfter($('#selected-holder'));
+  $('#confirm').on('click', function () { updateNav(true); });
+  updateNav(false);
+});
